@@ -1,23 +1,60 @@
-# SSB Data Fetcher
+# Introduction - SSB Data Fetcher
 
-A Python library for fetching statistical data from Statistics Norway (Statistisk sentralbyrå - SSB) using their PxWebApi v2.
+A Python project that fetches statistical data from Statistics Norway (Statistisk sentralbyrå - SSB) using their PxWebApi v2.
+
+PxWebApi v2 requires understanding of pivot table structures, dimenstion IDs and value codes. My intention with this project is to abstract that away, so it becomes easier to work with analysis and visualizations in Jupyter Notebooks.
+
+The SSB wrapper makes it easy to fetch Norwegian statistical data without wrestling with API complexity. Just search, inspect, and fetch—all with clean, human-readable output.
+
+- [Features](#features)
+- [Installation](#installation)
+- [Workflow](#workflow)
+- [Usage](#usage)
+  - [Discover Tables](#discover-tables)
+  - [Inspect Dimensions](#inspect-dimensions)
+  - [Fetch Data](#fetch-data)
+- [Architecture](#architecture)
+- [Parameters](#parameters)
+- [Notes](#notes)
+- [License](#license)
+- [References](#references)
 
 ## Features
 
 - **Simple CSV fetching** from SSB's statistical tables
+
 - **Table discovery** - search and list available tables
+
 - **Metadata inspection** - view available filters and dimensions
+
 - **Data cleaning** - automatically strip codes from headers and values for human-readable output
+
 - **Flexible filtering** - filter by any dimension (gender, age, region, etc.)
+
 - **Time period control** - fetch all data, last N periods, or data from a specific year forward
 
 ## Installation
 
-requirements.txt
+Create a virtual environment and install dependencies:
 
-### Quick-start
+<pre>
 
-from src.fetcher import SSBcsvFetcher
+python -m venv venv
+source venv\Scripts\activate (Windows)
+source venv\bin\activate (macOS/Linux)
+
+pip install -r requirements.txt
+
+packages such as geopandas, folium, matplotlib included to create geospatial visualizations
+
+</pre>
+
+
+### Workflow
+
+1. **Search** for tables by keyword
+2. **Inspect** available dimensions and filters
+3. **Fetch** data with automatic cleaning
 
 <pre>
 # Initialize fetcher
@@ -25,6 +62,7 @@ fetcher = SSBcsvFetcher()
 
 # Search for tables
 fetcher.search_tables('befolkning')
+tables[['id', 'description']].head()
 
 # Inspect available filters
 fetcher.inspect_table('05810')
