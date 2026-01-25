@@ -34,12 +34,9 @@ class SSBcsvFetcher:
     def fetch_clean_table(self, table_id: str, time_period: str = 'top(1)',
                          filters: dict = None, lang: str = 'no') -> pd.DataFrame:
         df = self.fetch_pivot_table(table_id, time_period, filters, lang)
-        df_clean = df.copy()
+        df_clean = df.copy(deep=True)
 
-        for col in df_clean.columns:
-            if ' - ' in col:
-                df_clean[col] = df_clean[col].astype(str).str.split(' - ').str[-1].str.strip()
-
+        # Only clean column names
         df_clean.columns = [col.split(' - ')[-1].strip() if ' - ' in col else col 
                             for col in df_clean.columns]
 
