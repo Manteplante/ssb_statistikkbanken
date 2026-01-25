@@ -1,3 +1,10 @@
+
+# ============================================================
+# SSB API Module
+# Handles HTTP requests to SSB's PxWebApi v2.
+# ============================================================
+
+
 import pandas as pd
 import requests
 import logging
@@ -5,6 +12,16 @@ import io
 from urllib.parse import quote
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# SSBApi Class
+# Handles:
+# - HTTP requests to SSB's endpoints
+# - URL construction and parameter encoding
+# - CSV parsing with correct encoding
+# - Dimension metadata retrieval
+# ============================================================
 
 class SSBApi:
 
@@ -14,10 +31,14 @@ class SSBApi:
     def __init__(self):
         pass
     
+    # ============================================================
+    # Core Data Fetching Methods
+    # ============================================================
+
     def fetch_csv(self, csv_url: str, separator: str = ';') -> pd.DataFrame:
         try:
             logger.info(f"Fetching CSV from: {csv_url}")
-            df = pd.read_csv(csv_url, sep=separator, encoding='iso-8859-1')
+            df = pd.read_csv(csv_url, sep=separator, encoding='iso-8859-1') # SSB uses ISO-8859-1 encoding
             logger.info(f"Successfully fetched {len(df)} rows")
             return df
         except Exception as e:
@@ -66,7 +87,10 @@ class SSBApi:
         except Exception as e:
             logger.error(f"Error fetching pivot table: {e}")
             raise
-        
+    
+    # ============================================================
+    # Metadata Method
+    # ============================================================
     
     def get_dimensions(self, table_id: str, lang: str = 'no') -> dict:
             try:

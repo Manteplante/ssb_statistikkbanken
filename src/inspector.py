@@ -1,3 +1,12 @@
+
+# ============================================================
+# SSB Inspector Module
+# Handles:
+# - Table discovery (listing and searching)
+# - Metadata inspection (table info, dimensions)
+# - Human-readable output formatting
+# ============================================================
+
 import logging
 import requests
 import pandas as pd
@@ -5,9 +14,17 @@ from .api import SSBApi
 
 logger = logging.getLogger(__name__)
 
+# ============================================================
+# SSBInspector Class
+# ============================================================
+
 class SSBInspector:
     def __init__(self, api: SSBApi):
         self.api = api
+
+    # ============================================================
+    # Table Discovery Methods
+    # ============================================================
 
     def list_tables(self, pagesize: int = 10, pagenumber: int = 1, lang: str = 'no') -> pd.DataFrame:
         
@@ -46,6 +63,12 @@ class SSBInspector:
             logger.error(f"Error searching tables: {e}")
             raise
     
+
+    # ============================================================
+    # Table Inspection Methods
+    # ============================================================
+
+
     #  Get basic information about a table
 
     def get_table_info(self, table_id: str, lang: str = 'no') -> dict:
@@ -63,6 +86,10 @@ class SSBInspector:
     # Delegate to API to get dimensions
     def get_dimensions(self, table_id: str, lang: str = 'no'):
         return self.api.get_dimensions(table_id, lang)
+
+    # ============================================================
+    # Display/Formatting Methods
+    # ============================================================
 
     def print_table_info(self, table_id: str, lang: str = 'no') -> None:
  

@@ -1,5 +1,9 @@
-# SSB (Statistisk sentralbyrå) Data Fetcher Module
-# Focused on CSV method for fetching data from Statistics Norway
+# ============================================================
+# SSB CSV Fetcher Module
+# Handles:
+# - Main interface for fetching data from SSB
+# - Combines API and Inspector functionalities
+# ============================================================
 
 import pandas as pd
 import logging
@@ -10,13 +14,19 @@ from .inspector import SSBInspector
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Simple class for fetching CSV data from SSB
+# ============================================================================
+# SSBcsvFetcher Class
+# ============================================================================
 
 class SSBcsvFetcher:
     def __init__(self):
         self.api = SSBApi()
         self.inspector = SSBInspector(self.api)
     
+    # ============================================================
+    # Data Fetching Methods
+    # ============================================================
+
     def fetch_pivot_table(self, table_id: str, time_period: str = 'top(1)',
                          filters: dict = None, lang: str = 'no') -> pd.DataFrame:
         return self.api.fetch_pivot_table(table_id, time_period, filters, lang)
@@ -35,6 +45,10 @@ class SSBcsvFetcher:
 
         return df_clean
     
+    # ============================================================
+    # Table Discovery and Inspection Methods
+    # ============================================================
+
     # Delegate to inspector
     def search_tables(self, query: str, lang: str = 'no'):
         return self.inspector.search_tables(query, lang)
@@ -42,6 +56,10 @@ class SSBcsvFetcher:
     def list_tables(self, pagesize: int = 10, pagenumber: int = 1, lang: str = 'no'):
         return self.inspector.list_tables(pagesize, pagenumber, lang)
     
+    # ============================================================
+    # Metadata Inspection Methods
+    # ============================================================
+
     def inspect_table(self, table_id: str, lang: str = 'no'):
         return self.inspector.inspect_table(table_id, lang)
     
