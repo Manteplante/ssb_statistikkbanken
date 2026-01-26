@@ -1,0 +1,3 @@
+--> follow these steps: https://learn.microsoft.com/en-us/power-bi/visuals/desktop-shape-map
+
+--> download borders from this repo: https://github.com/AnalyseABO/Kart-fylker-og-kommuner-json
