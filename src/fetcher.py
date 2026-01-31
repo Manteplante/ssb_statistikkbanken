@@ -9,6 +9,7 @@ import pandas as pd
 import logging
 from .api import SSBApi
 from .inspector import SSBInspector
+from .klass import SSBKlassApi
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,7 @@ class SSBcsvFetcher:
     def __init__(self):
         self.api = SSBApi()
         self.inspector = SSBInspector(self.api)
+        self.klass = SSBKlassApi()
     
     # ============================================================
     # Data Fetching Methods
@@ -68,3 +70,33 @@ class SSBcsvFetcher:
     
     def print_dimensions(self, table_id: str, lang: str = 'no'):
         return self.inspector.print_dimensions(table_id, lang)
+    
+    # ============================================================
+    # Region/Classification Methods
+    # ============================================================
+    
+    # Get all Norwegian counties (fylker) for 2026 from KLASS API
+
+    def get_counties(self) -> pd.DataFrame:
+        return self.klass.get_counties_2026()
+    
+    # Get list of county codes for 2026
+    def get_county_codes(self) -> list:
+        return self.klass.get_county_codes()
+    
+    # Get dictionary mapping county code -> name
+    def get_county_mapping(self) -> dict:
+        return self.klass.get_county_mapping()
+    
+    # Get all Norwegian municipalities (kommuner) for 2026 from KLASS API
+    def get_municipalities(self) -> pd.DataFrame:
+        return self.klass.get_municipalities_2026()
+    
+
+    # Get list of municipality codes for 2026
+    def get_municipality_codes(self) -> list:
+        return self.klass.get_municipality_codes()
+    
+    # Get dictionary mapping municipality code -> name
+    def get_municipality_mapping(self) -> dict:
+        return self.klass.get_municipality_mapping()
