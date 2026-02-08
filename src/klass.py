@@ -33,8 +33,9 @@ class SSBKlassApi:
             url = f"{self.BASE_URL}/classifications/{classification_id}/codes"
             
             params = {
-                'language': 'no',
-                'format': 'json'
+                'language': 'NB',
+                'format': 'json',
+                'from': '2026-01-01'  # Required parameter for KLASS API date range
             }
             
             if version:
