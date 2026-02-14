@@ -64,17 +64,30 @@ class SSBApi:
 
         dimensions = self.get_dimensions(table_id, lang)
         
+        # Dimensions that should never get automatic wildcards
+        system_dimensions = ['Tid', 'statistikkvariabel', 'ContentsCode']
+        
         if filters:
             for dimension, value in filters.items():
                 url += f"&valuecodes[{dimension}]={quote(str(value), safe='')}"
             
+            # Add wildcards for other dimensions not in filters
             for dim_id in dimensions.keys():
-                if dim_id not in ['Tid', 'statistikkvariabel'] and dim_id not in filters:
+                if dim_id not in system_dimensions and dim_id not in filters:
                     url += f"&valuecodes[{dim_id}]=*"
+            
+            # If ContentsCode not provided in filters, add wildcard for it
+            if 'ContentsCode' not in filters and 'ContentsCode' in dimensions:
+                url += "&valuecodes[ContentsCode]=*"
         else:
+            # No filters: add wildcards for all non-system dimensions
             for dim_id in dimensions.keys():
-                if dim_id not in ['Tid', 'statistikkvariabel']:
+                if dim_id not in system_dimensions:
                     url += f"&valuecodes[{dim_id}]=*"
+            
+            # Add wildcard for ContentsCode if it exists
+            if 'ContentsCode' in dimensions:
+                url += "&valuecodes[ContentsCode]=*"
 
         try:
             logger.info(f"Fetching pivot table {table_id}")
