@@ -9,7 +9,7 @@ The point of it is that a query returns a frame you can analyse immediately:
 tidy long, correctly typed, with codes and labels in separate columns — no
 `.iloc` surgery, no splitting `"0301: Oslo"` back apart, no hand-maintained
 lookup tables for region names.
-
+s
 ## Contents
 
 - [Quickstart](#quickstart)
