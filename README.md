@@ -12,11 +12,11 @@ lookup tables for region names.
 
 ## Quickstart
 
-From the repo root (from a notebook one level down, prefix with
-`import sys; sys.path.insert(0, "..")`):
+`make sync` installs the package itself into `.venv` (editable), so this works
+from anywhere in the repo — no `sys.path` hack:
 
 ```python
-from src import SSB, klass
+from ssb_statistikkbanken import SSB, klass
 
 ssb = SSB()
 
@@ -47,6 +47,31 @@ pop.groupby("fylke", as_index=False)["value"].sum()
 ```
 
 Full API reference: [`src/README.md`](src/README.md).
+
+## Using this from another repo
+
+It's a real installable package (`src/ssb_statistikkbanken/`), so a Streamlit
+app, a pipeline, or any other repo on your machine can depend on it directly
+from GitHub — no PyPI, nothing published, this repo stays private:
+
+```bash
+uv add "git+https://github.com/Manteplante/ssb_statistikkbanken" --branch main
+```
+
+```python
+from ssb_statistikkbanken import SSB, klass
+```
+
+Whatever already lets you `git clone` this repo (VS Code's GitHub auth, an SSH
+key, a stored PAT) is all `uv add` needs too — nothing extra to configure. The
+consuming repo tracks `main`, so a change here shows up there after:
+
+```bash
+uv lock --upgrade-package ssb-statistikkbanken
+```
+
+Since it's private, anyone else who wants to add it needs to be a GitHub
+collaborator on this repo first.
 
 ## Requirements
 
@@ -117,10 +142,11 @@ make notebook name=population_trends     # -> eda/population_trends.ipynb
 make notebook name=fylke_map subdir=maps_wip   # -> eda/maps_wip/fylke_map.ipynb
 ```
 
-Each one is created with the standard header already in place (`sys.path`
-pointed at the repo root, `from src import SSB, klass`, an `SSB()` instance
-ready to use) and a kernelspec pointing at this project's `.venv` — pick
-**ssb-statistikkbanken (.venv)** from the kernel list in Jupyter or VS Code.
+Each one is created with the standard header already in place
+(`from ssb_statistikkbanken import SSB`, an `SSB()` instance ready to use — no
+`sys.path` hack needed, the package is installed into `.venv`) and a kernelspec
+pointing at this project's `.venv` — pick **ssb-statistikkbanken (.venv)** from
+the kernel list in Jupyter or VS Code.
 Because `eda/` is linted (`make lint` / `make check`, CI included — the three
 notebooks still on the removed legacy wrapper are the only exclusion), what you
 commit is held to the same bar as `src/`.

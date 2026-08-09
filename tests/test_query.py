@@ -4,8 +4,13 @@ from __future__ import annotations
 
 import pytest
 
-from src import SelectionTooLargeError, UnknownValueError, UnknownVariableError, build_selection
-from src._query import coerce_values, expand_wildcard, is_expression
+from ssb_statistikkbanken import (
+    SelectionTooLargeError,
+    UnknownValueError,
+    UnknownVariableError,
+    build_selection,
+)
+from ssb_statistikkbanken._query import coerce_values, expand_wildcard, is_expression
 
 
 class TestCoercion:

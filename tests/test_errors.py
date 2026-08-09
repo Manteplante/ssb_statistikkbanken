@@ -5,14 +5,14 @@ from __future__ import annotations
 import pytest
 from requests.exceptions import HTTPError
 
-from src import (
+from ssb_statistikkbanken import (
     BadSelectionError,
     RateLimitedError,
     SsbError,
     SsbHTTPError,
     TableNotFoundError,
 )
-from src.errors import parse_pxweb_message, suggest, wrap_pxweb_errors
+from ssb_statistikkbanken.errors import parse_pxweb_message, suggest, wrap_pxweb_errors
 
 
 def pxweb_message(status: int, reason: str, **body: object) -> str:

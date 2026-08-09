@@ -5,8 +5,7 @@ HTTP layer, query batching, threading and response caching. This package adds
 SSB-specific defaults, validation with actionable errors, and results reshaped
 into tidy frames with codes and labels in separate columns.
 
->>> import sys; sys.path.insert(0, "..")
->>> from src import SSB, klass
+>>> from ssb_statistikkbanken import SSB, klass
 >>> ssb = SSB()
 >>> ssb.fetch("05810", Kjonn="0", Alder="*", time=range(2020, 2026))   # doctest: +SKIP
 """

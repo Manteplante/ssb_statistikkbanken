@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pandas.api import types as ptypes
 
-from src import SSB, TableInfo
+from ssb_statistikkbanken import SSB, TableInfo
 
 
 def test_constructing_a_client_makes_no_calls():

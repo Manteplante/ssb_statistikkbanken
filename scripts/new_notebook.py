@@ -32,23 +32,20 @@ def _title(slug: str) -> str:
     return slug.replace("_", " ").replace("-", " ").strip().capitalize()
 
 
-def build_notebook(title: str, depth: int) -> dict:
-    """A notebook with the same sys.path + import header every eda/ notebook uses.
+def build_notebook(title: str) -> dict:
+    """A notebook with the same import header every eda/ notebook uses.
 
-    Only imports what the header itself uses, so a fresh scaffold passes
-    `make lint` unedited -- the rest is left as commented-out reminders rather
-    than unused imports.
+    The package installs editable into .venv on `uv sync`, so no sys.path hack
+    is needed regardless of how deep the notebook lives under eda/. Only
+    imports what the header itself uses, so a fresh scaffold passes `make lint`
+    unedited -- the rest is left as commented-out reminders rather than unused
+    imports.
     """
-    path_up = "/".join([".."] * depth)
     header = [
-        "import sys\n",
+        "from ssb_statistikkbanken import SSB\n",
         "\n",
-        f'sys.path.insert(0, "{path_up}")\n',
-        "\n",
-        "from src import SSB\n",
-        "\n",
-        "# from src import klass          # KLASS joins: attach_names, attach_parent, ...\n",
-        "# import pandas as pd            # once you start reshaping results\n",
+        "# from ssb_statistikkbanken import klass   # attach_names, attach_parent, ...\n",
+        "# import pandas as pd                       # once you start reshaping results\n",
         "\n",
         "ssb = SSB()\n",
         "ssb",
@@ -93,8 +90,7 @@ def main() -> None:
         sys.exit(f"{target.relative_to(ROOT)} already exists -- pick a different name.")
 
     target_dir.mkdir(parents=True, exist_ok=True)
-    depth = len(target.relative_to(ROOT).parts) - 1  # "..".repeat to reach the repo root
-    notebook = build_notebook(_title(slug), depth)
+    notebook = build_notebook(_title(slug))
     target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(f"created {target.relative_to(ROOT)}")

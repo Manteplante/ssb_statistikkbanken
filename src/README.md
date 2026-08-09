@@ -1,23 +1,19 @@
-# `src` — the SSB wrapper
+# `ssb_statistikkbanken` — the SSB wrapper
 
 Built on [pxwebpy](https://pypi.org/project/pxwebpy/), which supplies the HTTP
 layer, query batching, threading and response caching. This package adds the
 SSB-specific defaults, validation and reshaping on top.
 
-Not packaged — import it from source. From the repo root:
+A real installable package at `src/ssb_statistikkbanken/`. `make sync`
+installs it into `.venv` editable, so this works anywhere in the repo — no
+`sys.path` hack:
 
 ```python
-from src import SSB, klass
+from ssb_statistikkbanken import SSB, klass
 ```
 
-From a notebook one directory down (`eda/`, `maps/`, …):
-
-```python
-import sys
-
-sys.path.insert(0, "..")
-from src import SSB, klass
-```
+It's installable from another repo too — private, not published anywhere.
+See the root [README](../README.md#using-this-from-another-repo).
 
 ## The 30-second version
 

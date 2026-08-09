@@ -6,8 +6,8 @@ import pandas as pd
 import pytest
 from pandas.api import types as ptypes
 
-from src import Dataset, normalize_records
-from src._frames import _split_code_value
+from ssb_statistikkbanken import Dataset, normalize_records
+from ssb_statistikkbanken._frames import _split_code_value
 
 
 class TestSplitting:
