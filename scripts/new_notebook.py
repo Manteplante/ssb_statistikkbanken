@@ -1,6 +1,7 @@
 """Scaffold a new notebook in eda/, wired to this repo's wrapper and kernel.
 
-Used by `make notebook name=<name> [dir=<subdir>]` -- see the Makefile.
+Used by `make notebook` -- see the Makefile, which prompts for whatever isn't
+passed via `name=`/`subdir=` and calls this with `--dir <subdir>`.
 """
 
 from __future__ import annotations
@@ -32,18 +33,25 @@ def _title(slug: str) -> str:
 
 
 def build_notebook(title: str, depth: int) -> dict:
-    """A notebook with the same sys.path + import header every eda/ notebook uses."""
+    """A notebook with the same sys.path + import header every eda/ notebook uses.
+
+    Only imports what the header itself uses, so a fresh scaffold passes
+    `make lint` unedited -- the rest is left as commented-out reminders rather
+    than unused imports.
+    """
     path_up = "/".join([".."] * depth)
     header = [
         "import sys\n",
+        "\n",
         f'sys.path.insert(0, "{path_up}")\n',
         "\n",
-        "import pandas as pd\n",
+        "from src import SSB\n",
         "\n",
-        "from src import SSB, klass\n",
+        "# from src import klass          # KLASS joins: attach_names, attach_parent, ...\n",
+        "# import pandas as pd            # once you start reshaping results\n",
         "\n",
         "ssb = SSB()\n",
-        "ssb\n",
+        "ssb",
     ]
     return {
         "cells": [

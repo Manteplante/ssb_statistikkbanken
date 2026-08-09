@@ -87,7 +87,8 @@ the test suite are dramatically slower across the 9p mount.
 | `make test-net` | live smoke tests against SSB and KLASS |
 | `make check` | lint + typecheck + test, in CI's order |
 | `make coverage` | offline suite with an HTML report |
-| `make notebook` | start JupyterLab |
+| `make kernel` | register this repo's `.venv` as a Jupyter kernel (idempotent) |
+| `make notebook` | scaffold a new notebook in `eda/` — see [Exploring data in Jupyter](#exploring-data-in-jupyter) |
 | `make fixtures` | re-record the test fixtures |
 
 CI runs ruff, mypy and the offline suite on every push and pull request, on
@@ -107,9 +108,22 @@ has been ported to the new wrapper and runs end to end — see below.
 
 ## Exploring data in Jupyter
 
+Develop notebooks locally in `eda/`, on this repo's own kernel — no separate
+environment, no `sys.path` guesswork:
+
 ```bash
-make notebook   # jupyter lab --no-browser; ctrl-click the printed 127.0.0.1 URL
+make notebook                            # prompts for a name, and a subfolder in eda/
+make notebook name=population_trends     # -> eda/population_trends.ipynb
+make notebook name=fylke_map subdir=maps_wip   # -> eda/maps_wip/fylke_map.ipynb
 ```
+
+Each one is created with the standard header already in place (`sys.path`
+pointed at the repo root, `from src import SSB, klass`, an `SSB()` instance
+ready to use) and a kernelspec pointing at this project's `.venv` — pick
+**ssb-statistikkbanken (.venv)** from the kernel list in Jupyter or VS Code.
+Because `eda/` is linted (`make lint` / `make check`, CI included — the three
+notebooks still on the removed legacy wrapper are the only exclusion), what you
+commit is held to the same bar as `src/`.
 
 [`eda/ssb_dataframe_fetcher_tool.ipynb`](eda/ssb_dataframe_fetcher_tool.ipynb)
 is a guided tour of the wrapper against a real table (05803, population changes

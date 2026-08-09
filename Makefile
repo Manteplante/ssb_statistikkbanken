@@ -32,9 +32,14 @@ kernel:  ## Register this repo's venv as a Jupyter kernel (idempotent)
 	uv run python -m ipykernel install --user --name ssb-statistikkbanken \
 		--display-name "ssb-statistikkbanken (.venv)"
 
-notebook: kernel  ## Scaffold a notebook in eda/ -- usage: make notebook name=<name> [dir=<subdir>]
-	@if [ -z "$(name)" ]; then echo "usage: make notebook name=<name> [dir=<subdir>]"; exit 1; fi
-	uv run python scripts/new_notebook.py "$(name)" $(if $(dir),--dir "$(dir)",)
+notebook: kernel  ## Scaffold a notebook in eda/ -- prompts for anything not given via name=/subdir=
+	@name="$(name)"; subdir="$(subdir)"; \
+	if [ -z "$$name" ]; then read -r -p "Notebook name: " name; fi; \
+	if [ -z "$$name" ]; then echo "A notebook name is required."; exit 1; fi; \
+	if [ -z "$$subdir" ]; then read -r -p "Subfolder in eda/ (blank to create it directly in eda/): " subdir; fi; \
+	args=("$$name"); \
+	if [ -n "$$subdir" ]; then args+=(--dir "$$subdir"); fi; \
+	uv run python scripts/new_notebook.py "$${args[@]}"
 
 fixtures:  ## Re-record tests/fixtures/**/*.json from the live APIs
 	uv run python tests/fixtures/refresh.py
