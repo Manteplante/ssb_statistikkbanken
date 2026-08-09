@@ -1,0 +1,679 @@
+{
+ "language": "no",
+ "tables": [
+  {
+   "id": "13930",
+   "label": "13930: FoU-personale, befolkningen, sysselsatte og studenter, etter innvandringskategori 2007-2024",
+   "description": "",
+   "sortCode": "0000001305",
+   "updated": "2025-12-11T07:00:00Z",
+   "firstPeriod": "2007",
+   "lastPeriod": "2024",
+   "category": "public",
+   "variableNames": [
+    "innvandringskategori",
+    "statistikkvariabel",
+    "år"
+   ],
+   "source": "Statistisk sentralbyrå",
+   "subjectCode": "ti",
+   "timeUnit": "Annual",
+   "paths": [
+    [
+     {
+      "id": "in",
+      "label": "Innvandring og innvandrere",
+      "sortCode": "0000042"
+     },
+     {
+      "id": "in12",
+      "label": "Utdanning",
+      "sortCode": "0000051"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000052"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ],
+    [
+     {
+      "id": "ti",
+      "label": "Teknologi og innovasjon",
+      "sortCode": "0000099"
+     },
+     {
+      "id": "ti01",
+      "label": "Forskning og utvikling",
+      "sortCode": "0000101"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000102"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ],
+    [
+     {
+      "id": "ud",
+      "label": "Utdanning",
+      "sortCode": "0000107"
+     },
+     {
+      "id": "ud03",
+      "label": "Universitets- og høgskoleutdanning",
+      "sortCode": "0000111"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000112"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ]
+   ],
+   "links": [
+    {
+     "rel": "self",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/13930?lang=no"
+    },
+    {
+     "rel": "alternate",
+     "hreflang": "en",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/13930?lang=en"
+    },
+    {
+     "rel": "metadata",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/13930/metadata?lang=no"
+    },
+    {
+     "rel": "data",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/13930/data?lang=no&outputFormat=json-stat2"
+    }
+   ]
+  },
+  {
+   "id": "14476",
+   "label": "14476: Forskere/faglig personale, befolkningen, sysselsatte og studenter, etter foreldrenes utdanningsnivå 2012-2024",
+   "description": "",
+   "sortCode": "0000001490",
+   "updated": "2026-02-05T07:00:00Z",
+   "firstPeriod": "2012",
+   "lastPeriod": "2024",
+   "category": "public",
+   "variableNames": [
+    "foreldrenes utdanningsnivå",
+    "statistikkvariabel",
+    "år"
+   ],
+   "source": "Statistisk sentralbyrå",
+   "subjectCode": "ti",
+   "timeUnit": "Annual",
+   "paths": [
+    [
+     {
+      "id": "in",
+      "label": "Innvandring og innvandrere",
+      "sortCode": "0000042"
+     },
+     {
+      "id": "in12",
+      "label": "Utdanning",
+      "sortCode": "0000051"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000052"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ],
+    [
+     {
+      "id": "ti",
+      "label": "Teknologi og innovasjon",
+      "sortCode": "0000099"
+     },
+     {
+      "id": "ti01",
+      "label": "Forskning og utvikling",
+      "sortCode": "0000101"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000102"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ],
+    [
+     {
+      "id": "ud",
+      "label": "Utdanning",
+      "sortCode": "0000107"
+     },
+     {
+      "id": "ud03",
+      "label": "Universitets- og høgskoleutdanning",
+      "sortCode": "0000111"
+     },
+     {
+      "id": "fouoff",
+      "label": "Forskerpersonale",
+      "sortCode": "0000112"
+     },
+     {
+      "id": "SBMENU10814",
+      "label": "Mangfold i forskning",
+      "sortCode": "0000001300"
+     }
+    ]
+   ],
+   "links": [
+    {
+     "rel": "self",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/14476?lang=no"
+    },
+    {
+     "rel": "alternate",
+     "hreflang": "en",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/14476?lang=en"
+    },
+    {
+     "rel": "metadata",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/14476/metadata?lang=no"
+    },
+    {
+     "rel": "data",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/14476/data?lang=no&outputFormat=json-stat2"
+    }
+   ]
+  },
+  {
+   "id": "07519",
+   "label": "07519: Samisk statistikk. Folkemengde, tettsteder og areal. Norge nord for Saltfjellet 2008-2021",
+   "description": "",
+   "sortCode": "0000000010",
+   "updated": "2022-02-04T07:00:00Z",
+   "firstPeriod": "2008",
+   "lastPeriod": "2021",
+   "category": "public",
+   "variableNames": [
+    "område",
+    "statistikkvariabel",
+    "år"
+   ],
+   "source": "Statistisk sentralbyrå",
+   "subjectCode": "be",
+   "timeUnit": "Annual",
+   "paths": [
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be05",
+      "label": "Folketall",
+      "sortCode": "0000020"
+     },
+     {
+      "id": "samisk",
+      "label": "Samiske forhold",
+      "sortCode": "0000021"
+     },
+     {
+      "id": "SBMENU1500",
+      "label": "Befolkning",
+      "sortCode": "0000000100"
+     }
+    ]
+   ],
+   "links": [
+    {
+     "rel": "self",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/07519?lang=no"
+    },
+    {
+     "rel": "alternate",
+     "hreflang": "en",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/07519?lang=en"
+    },
+    {
+     "rel": "metadata",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/07519/metadata?lang=no"
+    },
+    {
+     "rel": "data",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/07519/data?lang=no&outputFormat=json-stat2"
+    }
+   ]
+  },
+  {
+   "id": "12631",
+   "label": "12631: Andel av befolkningen (mellom 16 og 79 år) på ferie (prosent) 2013-2025",
+   "description": "",
+   "sortCode": "0006010",
+   "updated": "2026-02-26T07:00:00Z",
+   "firstPeriod": "2013",
+   "lastPeriod": "2025",
+   "category": "public",
+   "variableNames": [
+    "feriemål",
+    "statistikkvariabel",
+    "år"
+   ],
+   "source": "Statistisk sentralbyrå",
+   "subjectCode": "tr",
+   "timeUnit": "Annual",
+   "paths": [
+    [
+     {
+      "id": "kf",
+      "label": "Kultur og fritid",
+      "sortCode": "0000060"
+     },
+     {
+      "id": "kf05",
+      "label": "Tids- og mediebruk",
+      "sortCode": "0000065"
+     },
+     {
+      "id": "reise",
+      "label": "Reiseundersøkelsen",
+      "sortCode": "0000066"
+     },
+     {
+      "id": "SBMENU12131",
+      "label": "Andel av befolkningen som reiser på ferie",
+      "sortCode": "0006000"
+     }
+    ],
+    [
+     {
+      "id": "tr",
+      "label": "Transport og reiseliv",
+      "sortCode": "0000102"
+     },
+     {
+      "id": "tr04",
+      "label": "Reiseliv",
+      "sortCode": "0000105"
+     },
+     {
+      "id": "reise",
+      "label": "Reiseundersøkelsen",
+      "sortCode": "0000106"
+     },
+     {
+      "id": "SBMENU12131",
+      "label": "Andel av befolkningen som reiser på ferie",
+      "sortCode": "0006000"
+     }
+    ]
+   ],
+   "links": [
+    {
+     "rel": "self",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/12631?lang=no"
+    },
+    {
+     "rel": "alternate",
+     "hreflang": "en",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/12631?lang=en"
+    },
+    {
+     "rel": "metadata",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/12631/metadata?lang=no"
+    },
+    {
+     "rel": "data",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/12631/data?lang=no&outputFormat=json-stat2"
+    }
+   ]
+  },
+  {
+   "id": "05803",
+   "label": "05803: Endringer i befolkningen i løpet av året 1735-2026",
+   "description": "",
+   "sortCode": "0000000730",
+   "updated": "2026-04-15T06:00:00Z",
+   "firstPeriod": "1735",
+   "lastPeriod": "2026",
+   "category": "public",
+   "variableNames": [
+    "statistikkvariabel",
+    "år"
+   ],
+   "source": "Statistisk sentralbyrå",
+   "subjectCode": "be",
+   "timeUnit": "Annual",
+   "paths": [
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be01",
+      "label": "Barn, familier og husholdninger",
+      "sortCode": "0000017"
+     },
+     {
+      "id": "ekteskap",
+      "label": "Ekteskap og skilsmisser",
+      "sortCode": "0000018"
+     },
+     {
+      "id": "SBMENU4201",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be01",
+      "label": "Barn, familier og husholdninger",
+      "sortCode": "0000017"
+     },
+     {
+      "id": "fodte",
+      "label": "Fødte",
+      "sortCode": "0000018"
+     },
+     {
+      "id": "SBMENU3884",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be01",
+      "label": "Barn, familier og husholdninger",
+      "sortCode": "0000017"
+     },
+     {
+      "id": "folkemengde",
+      "label": "Befolkning",
+      "sortCode": "0000018"
+     },
+     {
+      "id": "SBMENU5580",
+      "label": "Lange tidsserier",
+      "sortCode": "0000000400"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be03",
+      "label": "Flytting",
+      "sortCode": "0000019"
+     },
+     {
+      "id": "flytting",
+      "label": "Flyttinger",
+      "sortCode": "0000020"
+     },
+     {
+      "id": "SBMENU3963",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be05",
+      "label": "Folketall",
+      "sortCode": "0000020"
+     },
+     {
+      "id": "folkemengde",
+      "label": "Befolkning",
+      "sortCode": "0000021"
+     },
+     {
+      "id": "SBMENU5580",
+      "label": "Lange tidsserier",
+      "sortCode": "0000000400"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be06",
+      "label": "Fødte og døde",
+      "sortCode": "0000021"
+     },
+     {
+      "id": "dode",
+      "label": "Døde",
+      "sortCode": "0000022"
+     },
+     {
+      "id": "SBMENU3900",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be06",
+      "label": "Fødte og døde",
+      "sortCode": "0000021"
+     },
+     {
+      "id": "fodte",
+      "label": "Fødte",
+      "sortCode": "0000022"
+     },
+     {
+      "id": "SBMENU3884",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "be",
+      "label": "Befolkning",
+      "sortCode": "0000016"
+     },
+     {
+      "id": "be07",
+      "label": "Innvandrere",
+      "sortCode": "0000022"
+     },
+     {
+      "id": "flytting",
+      "label": "Flyttinger",
+      "sortCode": "0000023"
+     },
+     {
+      "id": "SBMENU3963",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "in",
+      "label": "Innvandring og innvandrere",
+      "sortCode": "0000042"
+     },
+     {
+      "id": "in03",
+      "label": "Befolkning",
+      "sortCode": "0000045"
+     },
+     {
+      "id": "flytting",
+      "label": "Flyttinger",
+      "sortCode": "0000046"
+     },
+     {
+      "id": "SBMENU3963",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "in",
+      "label": "Innvandring og innvandrere",
+      "sortCode": "0000042"
+     },
+     {
+      "id": "in03",
+      "label": "Befolkning",
+      "sortCode": "0000045"
+     },
+     {
+      "id": "fodte",
+      "label": "Fødte",
+      "sortCode": "0000046"
+     },
+     {
+      "id": "SBMENU3884",
+      "label": "Historiske befolkningsendringer",
+      "sortCode": "0000000700"
+     }
+    ],
+    [
+     {
+      "id": "in",
+      "label": "Innvandring og innvandrere",
+      "sortCode": "0000042"
+     },
+     {
+      "id": "in03",
+      "label": "Befolkning",
+      "sortCode": "0000045"
+     },
+     {
+      "id": "folkemengde",
+      "label": "Befolkning",
+      "sortCode": "0000046"
+     },
+     {
+      "id": "SBMENU5580",
+      "label": "Lange tidsserier",
+      "sortCode": "0000000400"
+     }
+    ]
+   ],
+   "links": [
+    {
+     "rel": "self",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/05803?lang=no"
+    },
+    {
+     "rel": "alternate",
+     "hreflang": "en",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/05803?lang=en"
+    },
+    {
+     "rel": "metadata",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/05803/metadata?lang=no"
+    },
+    {
+     "rel": "data",
+     "hreflang": "no",
+     "href": "https://data.ssb.no/api/pxwebapi/v2/tables/05803/data?lang=no&outputFormat=json-stat2"
+    }
+   ]
+  }
+ ],
+ "page": {
+  "pageNumber": 1,
+  "pageSize": 5,
+  "totalElements": 306,
+  "totalPages": 62,
+  "links": [
+   {
+    "rel": "next",
+    "hreflang": "no",
+    "href": "https://data.ssb.no/api/pxwebapi/v2/tables/?lang=no&query=befolkning&pagesize=5&pageNumber=2"
+   },
+   {
+    "rel": "last",
+    "hreflang": "no",
+    "href": "https://data.ssb.no/api/pxwebapi/v2/tables/?lang=no&query=befolkning&pagesize=5&pageNumber=62"
+   }
+  ]
+ },
+ "links": [
+  {
+   "rel": "self",
+   "hreflang": "no",
+   "href": "https://data.ssb.no/api/pxwebapi/v2/tables/?lang=no&query=befolkning&pagesize=5&pageNumber=1"
+  }
+ ]
+}

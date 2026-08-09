@@ -1,186 +1,160 @@
-# Introduction - SSB Data Fetcher
+# ssb-statistikkbanken
 
-A Python project that fetches statistical data from Statistics Norway (Statistisk sentralbyrå - SSB) using their PxWebApi v2.
+A Python wrapper around [SSB](https://www.ssb.no)'s Statistikkbanken
+([PxWebApi v2](https://www.ssb.no/api/pxwebapiv2)) and the
+[KLASS](https://www.ssb.no/klass) classification register, built on
+[pxwebpy](https://pypi.org/project/pxwebpy/).
 
-PxWebApi v2 requires understanding of pivot table structures, dimenstion IDs and value codes. My intention with this project is to abstract that away, so it becomes easier to work with analysis and visualizations in Jupyter Notebooks.
+The point of it is that a query returns a frame you can analyse immediately:
+tidy long, correctly typed, with codes and labels in separate columns — no
+`.iloc` surgery, no splitting `"0301: Oslo"` back apart, no hand-maintained
+lookup tables for region names.
 
-The SSB wrapper makes it easy to fetch Norwegian statistical data without wrestling with API complexity. Just search, inspect, and fetch—all with clean, human-readable output.
+## Quickstart
 
-- [Features](#features)
-- [Installation](#installation)
-- [Workflow](#workflow)
-- [Usage](#usage)
-  - [Discover Tables](#discover-tables)
-  - [Inspect Dimensions](#inspect-dimensions)
-  - [Fetch Data](#fetch-data)
-- [Architecture](#architecture)
-- [Parameters](#parameters)
-- [Notes](#notes)
-- [License](#license)
-- [References](#references)
+From the repo root (from a notebook one level down, prefix with
+`import sys; sys.path.insert(0, "..")`):
 
-## Features
+```python
+from src import SSB, klass
 
-- **Simple CSV fetching** from SSB's statistical tables
+ssb = SSB()
 
-- **Table discovery** - search and list available tables
+# find a table
+ssb.search("befolkning", limit=10)
 
-- **Metadata inspection** - view available filters and dimensions
+# see what's in it -- an HTML card in Jupyter -- and the exact codes to filter on
+ssb.describe("05810")
+ssb.values("05810", "Alder")
 
-- **Data cleaning** - automatically strip codes from headers and values for human-readable output
+df = ssb.fetch("05810", Kjonn="0", Alder="*", time=range(2020, 2026))
+```
 
-- **Flexible filtering** - filter by any dimension (gender, age, region, etc.)
+| Kjonn | Kjonn_code | Alder | Alder_code | Tid | Tid_code | year | value |
+|---|---|---|---|---|---|---|---|
+| Begge kjønn | 0 | 0-6 år | 00-06 | 2020 | 2020 | 2020 | 412551 |
 
-- **Time period control** - fetch all data, last N periods, or data from a specific year forward
+`value` is a nullable `Int64`, `year` an `Int16`. Because the codes are their
+own columns, joining against KLASS or a GeoJSON is a merge rather than a regex:
 
-## Installation
+```python
+kommuner = klass.kommuner(2025)["code"].tolist()
+pop = ssb.fetch("11342", Region=kommuner, contents="Folkemengde", time="2025")
 
-Create a virtual environment and install dependencies:
+# roll municipalities up to counties using KLASS's own correspondence
+pop = klass.attach_parent(pop, "Region_code")
+pop.groupby("fylke", as_index=False)["value"].sum()
+```
 
-<pre>
+Full API reference: [`src/README.md`](src/README.md).
 
-python -m venv venv
-source venv\Scripts\activate (Windows)
-source venv\bin\activate (macOS/Linux)
+## Requirements
 
-pip install -r requirements.txt
+- **Linux, or WSL if you're on Windows.** Microsoft's install guide:
+  [learn.microsoft.com/windows/wsl/install](https://learn.microsoft.com/en-us/windows/wsl/install).
+- **[uv](https://docs.astral.sh/uv/)** for Python and dependency management. It's
+  a standalone tool, not a pip package — if you haven't used it before, this
+  walkthrough is a good primer: [realpython.com/python-uv](https://realpython.com/python-uv/).
 
-packages such as geopandas, folium, matplotlib included to create geospatial visualizations
+## Setup
 
-</pre>
+```bash
+make sync     # uv sync --locked
+```
 
+`.python-version` pins 3.14; uv fetches it if you don't have it. On WSL2 keep
+the repo on the Linux filesystem (`~/repositories/…`, not `/mnt/c/…`) — uv and
+the test suite are dramatically slower across the 9p mount.
 
-### Workflow
+## Layout
 
-1. **Search** for tables by keyword
-2. **Inspect** available dimensions and filters
-3. **Fetch** data with automatic cleaning
+| Path | What |
+|---|---|
+| `src/` | the wrapper — see [`src/README.md`](src/README.md) |
+| `tests/` | 108 offline tests against recorded fixtures, plus 8 live tests marked `network` |
+| `tests/fixtures/` | recorded SSB and KLASS responses; regenerate with `make fixtures` |
+| `eda/`, `maps/` | analysis notebooks (see the note below) |
 
-<pre>
-# Initialize fetcher
-fetcher = SSBcsvFetcher()
+## Development
 
-# Search for tables
-fetcher.search_tables('befolkning')
-tables[['id', 'description']].head()
+| Command | What |
+|---|---|
+| `make sync` | create/update `.venv` from `uv.lock` |
+| `make format` | ruff auto-fix, then format |
+| `make lint` | ruff check + format check, writing nothing |
+| `make typecheck` | mypy over `src/` |
+| `make test` | offline suite (no network) |
+| `make test-net` | live smoke tests against SSB and KLASS |
+| `make check` | lint + typecheck + test, in CI's order |
+| `make coverage` | offline suite with an HTML report |
+| `make notebook` | start JupyterLab |
+| `make fixtures` | re-record the test fixtures |
 
-# Inspect available filters
-fetcher.inspect_table('05810')
+CI runs ruff, mypy and the offline suite on every push and pull request, on
+Python 3.12 and 3.14. It never calls SSB — run `make test-net` yourself when you
+want to know whether the live API has drifted.
 
-# Fetch clean data
-df = fetcher.fetch_clean_table('05810', filters={'Kjonn': '0'})
-</pre>
+## ⚠️ The notebooks in `eda/` and `maps/`
 
-# Usage
+Most were written against an earlier wrapper (`from src.fetcher import
+SSBcsvFetcher`) that has since been removed, and **will not re-run as-is** —
+their committed outputs are kept as a record of the analysis. The migration
+table in [`src/README.md`](src/README.md) maps every old call onto its
+replacement.
 
-### Discover tables
+**Exception:** [`eda/ssb_dataframe_fetcher_tool.ipynb`](eda/ssb_dataframe_fetcher_tool.ipynb)
+has been ported to the new wrapper and runs end to end — see below.
 
-<pre>
+## Exploring data in Jupyter
 
-# List all available tables (paginated)
-fetcher.list_tables(pagesize=10, pagenumber=1)
+```bash
+make notebook   # jupyter lab --no-browser; ctrl-click the printed 127.0.0.1 URL
+```
 
-# Search for specific tables
-fetcher.search_tables('inntekt')
+[`eda/ssb_dataframe_fetcher_tool.ipynb`](eda/ssb_dataframe_fetcher_tool.ipynb)
+is a guided tour of the wrapper against a real table (05803, population changes
+1735–2026) and is the fastest way to learn the API hands-on. It walks through:
 
-# Get table info
-fetcher.print_table_info('05810')
+1. **`ssb.search(...)`** — find a table by free-text query; the result is a
+   DataFrame you can filter further, e.g. down to tables with a long history
+2. **`ssb.describe(...)`** — an HTML metadata card: which variables exist, how
+   many values each has, and which are mandatory
+3. **`ssb.values(...)`** — every value code for a variable, the ones you pass
+   to `fetch`
+4. **`ssb.fetch(...)`** — the actual data, already tidy and typed
+5. **`.pivot_table(...)`** — reshaping the tidy frame into a wide table for a
+   quick look or a plot
+6. a deliberate typo, to show what the did-you-mean error messages look like
 
-</pre>
+Open it, run it top to bottom, then swap in your own table id and filters —
+that loop (search → describe → values → fetch) is the intended way to explore
+a new dataset.
 
-### Inspect Dimensions
+## Cheat sheet
 
-<pre>
-# Show all available filters with codes
-fetcher.inspect_table('05810')
+The calls behind that walkthrough, if you just want the reference:
 
-# Or just print dimensions
-fetcher.print_dimensions('05810')
-</pre>
+| Call | What you get |
+|---|---|
+| `ssb.search("befolkning", limit=10)` | matching tables as a DataFrame |
+| `ssb.describe("05803")` | table metadata card |
+| `ssb.variables("05803")` | one row per variable |
+| `ssb.values("05803", "ContentsCode")` | every value code |
+| `ssb.fetch("05803", contents=[...], time=range(2020, 2026))` | tidy DataFrame |
+| `ssb.dataset(...)` | same, but `.to_polars()` / `.to_records()` / `.query` |
+| `ssb.table("05803")` | a handle bound to one table |
 
-### Fetch Data
+Filters take a single code, a list, a `range`, a wildcard (`"03*"`) or a PxWeb
+expression (`"top(5)"`). Leave the time selection out and you get the most recent
+period; mandatory variables you omit are selected in full.
 
-<pre>
+## References
 
-# Basic fetch (returns cleaned data)
-df = fetcher.fetch_clean_table('05810')
+- [SSB PxWebApi v2](https://www.ssb.no/api/pxwebapiv2) — 800,000 cells per
+  request, 30 requests/minute per IP, avoid 07:55–08:15
+- [KLASS API](https://data.ssb.no/api/klass/v1/api-guide.html)
+- [pxwebpy](https://stefur.github.io/pxwebpy/) — the client this builds on
 
-# With filters
-df = fetcher.fetch_clean_table('05810', filters={'Kjonn': '1', 'Alder': '16-44'})
-
-# All time periods
-df = fetcher.fetch_clean_table('05810', time_period='*')
-
-# Last 10 periods
-df = fetcher.fetch_clean_table('05810', time_period='top(10)')
-
-# From specific year forward
-df = fetcher.fetch_clean_table('05810', time_period='from(2020)')
-
-</pre>
-
-# Architecture
-
-<pre>
-
-The library is organized into three modules:
-
-api.py - Low-level API Client
-Handles HTTP communication with SSB's PxWebApi v2:
-
-fetch_csv() - Fetch raw CSV from URL
-fetch_table() - Fetch complete table
-fetch_pivot_table() - Fetch with custom filters
-get_dimensions() - Get available filters and codes
-inspector.py - Table Discovery & Metadata
-Provides human-friendly table exploration:
-
-list_tables() - List all tables
-search_tables() - Search by keyword
-print_table_info() - Display table metadata
-print_dimensions() - Show available filters
-inspect_table() - Comprehensive inspection
-fetcher.py - Main Orchestrator
-Clean interface combining both modules:
-
-fetch_pivot_table() - Raw data fetching
-fetch_clean_table() - Clean data fetching
-All inspector methods for discovery
-
-</pre>
-
-# Parameters
-
-time_period == control time periods
-filters == all other
-
-<pre>
-
-# Get female population by age group, all years
-df = fetcher.fetch_clean_table('05810', time_period='*', filters={'Kjonn': '0'})
-
-# Get male population, ages 16-44, last 5 years
-df = fetcher.fetch_clean_table(
-    '05810',
-    time_period='top(5)',
-    filters={'Kjonn': '1', 'Alder': '16-44'}
-)
-
-</pre>
-
-# Notes
-
-- SSB uses ISO-8859-1 encoding for CSV responses
-- The Tid dimension is handled separately via time_period parameter
-- All other dimensions use the filters parameter
-- Dimension codes are case-sensitive (e.g., 'Kjonn' not 'kjonn')
-- Use inspect_table() to see exact codes for your filters
-
-# License
+## License
 
 MIT
-
-# References
-
-https://www.ssb.no/en/omssb/tjenester-og-verktoy/api
-https://data.ssb.no/api/pxwebapi/v2/

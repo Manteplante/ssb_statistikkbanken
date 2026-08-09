@@ -1,0 +1,161 @@
+{
+ "version": "2.0",
+ "class": "dataset",
+ "label": "11342: Areal og befolkning, etter region og år",
+ "source": "Statistisk sentralbyrå",
+ "updated": "2026-02-27T07:00:00Z",
+ "note": [
+  "Til Landareal og areal: Kilde: Kartverkets kartserie N50 og Norsk polarinstitutts kartserie S100.",
+  "Til Landet: Hovedlandet minus Svalbard og Jan Mayen",
+  "Areal i alt: Uten saltvann. Medregnet ferskvann (innsjøer). \nLandareal: Uten ferskvann. Tabellen gjelder hovedlandet Norge (ikke medregnet Svalbard og Jan Mayen).",
+  "[Se liste over endringer i de regionale inndelingene](https://www.ssb.no/offentlig-sektor/kommunekatalog/endringer-i-de-regionale-inndelingene)."
+ ],
+ "role": {
+  "time": [
+   "Tid"
+  ],
+  "geo": [
+   "Region"
+  ],
+  "metric": [
+   "ContentsCode"
+  ]
+ },
+ "id": [
+  "Region",
+  "ContentsCode",
+  "Tid"
+ ],
+ "size": [
+  4,
+  1,
+  1
+ ],
+ "dimension": {
+  "Region": {
+   "label": "region",
+   "category": {
+    "index": {
+     "03": 0,
+     "11": 1,
+     "50": 2,
+     "56": 3
+    },
+    "label": {
+     "03": "Oslo - Oslove",
+     "11": "Rogaland",
+     "50": "Trøndelag - Trööndelage",
+     "56": "Finnmark - Finnmárku - Finmarkku"
+    },
+    "note": {
+     "50": [
+      "1.1.2019 ble kommunen 1567 Rindal flyttet fra Møre og Romsdal til Trøndelag. 1.1.2020 ble kommunen 1571 Halsa flyttet fra Møre og Romsdal til Trøndelag."
+     ]
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "code_value"
+   },
+   "link": {
+    "describedby": [
+     {
+      "extension": {
+       "Region": "urn:ssb:classification:klass:104 urn:ssb:classification:klass:131"
+      }
+     }
+    ]
+   }
+  },
+  "ContentsCode": {
+   "label": "statistikkvariabel",
+   "category": {
+    "index": {
+     "Folkemengde": 0
+    },
+    "label": {
+     "Folkemengde": "Befolkning per 1.1. (personer)"
+    },
+    "unit": {
+     "Folkemengde": {
+      "base": "antall",
+      "decimals": 0
+     }
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "refperiod": {
+     "Folkemengde": "1.1."
+    },
+    "show": "value",
+    "measuringType": {
+     "Folkemengde": "Stock"
+    },
+    "priceType": {
+     "Folkemengde": "NotApplicable"
+    },
+    "adjustment": {
+     "Folkemengde": "None"
+    },
+    "alternativeText": {
+     "Folkemengde": "Befolkning per 1.1. (personer)"
+    }
+   }
+  },
+  "Tid": {
+   "label": "år",
+   "category": {
+    "index": {
+     "2025": 0
+    },
+    "label": {
+     "2025": "2025"
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "code"
+   }
+  }
+ },
+ "extension": {
+  "px": {
+   "infofile": "None",
+   "tableid": "11342",
+   "decimals": 0,
+   "official-statistics": true,
+   "aggregallowed": true,
+   "copyright": false,
+   "language": "no",
+   "contents": "11342: Areal og befolkning,",
+   "descriptiondefault": false,
+   "heading": [
+    "ContentsCode",
+    "Tid"
+   ],
+   "stub": [
+    "Region"
+   ],
+   "matrix": "11342",
+   "subject-code": "be",
+   "subject-area": "Befolkning"
+  },
+  "discontinued": null,
+  "contact": [
+   {
+    "name": "Even Høydahl",
+    "organization": "Statistisk sentralbyrå",
+    "phone": "95 77 79 06",
+    "mail": "eve@ssb.no",
+    "raw": "Even Høydahl, Statistisk sentralbyrå# +47 95 77 79 06#eve@ssb.no"
+   }
+  ]
+ },
+ "value": [
+  724290,
+  504496,
+  486815,
+  75042
+ ]
+}

@@ -1,0 +1,224 @@
+{
+ "version": "2.0",
+ "class": "dataset",
+ "label": "05810: Befolkning, etter kjønn, alder og år",
+ "source": "Statistisk sentralbyrå",
+ "updated": "2026-02-25T07:00:00Z",
+ "note": [
+  "T.o.m 1990 gjelder tallene pr. 31. desember. Fra og med 1995 gjelder tallene pr. 1. januar."
+ ],
+ "role": {
+  "time": [
+   "Tid"
+  ],
+  "metric": [
+   "ContentsCode"
+  ]
+ },
+ "id": [
+  "Kjonn",
+  "Alder",
+  "ContentsCode",
+  "Tid"
+ ],
+ "size": [
+  1,
+  7,
+  1,
+  6
+ ],
+ "dimension": {
+  "Kjonn": {
+   "label": "kjønn",
+   "category": {
+    "index": {
+     "0": 0
+    },
+    "label": {
+     "0": "Begge kjønn"
+    }
+   },
+   "extension": {
+    "elimination": true,
+    "eliminationValueCode": "0",
+    "show": "value"
+   },
+   "link": {
+    "describedby": [
+     {
+      "extension": {
+       "Kjonn": "urn:ssb:classification:klass:2"
+      }
+     }
+    ]
+   }
+  },
+  "Alder": {
+   "label": "alder",
+   "category": {
+    "index": {
+     "999B": 0,
+     "00-06": 1,
+     "07-15": 2,
+     "16-44": 3,
+     "45-66": 4,
+     "67-79": 5,
+     "80+": 6
+    },
+    "label": {
+     "999B": "Alle",
+     "00-06": "0-6 år",
+     "07-15": "7-15 år",
+     "16-44": "16-44 år",
+     "45-66": "45-66 år",
+     "67-79": "67-79 år",
+     "80+": "80 år eller eldre"
+    }
+   },
+   "extension": {
+    "elimination": true,
+    "eliminationValueCode": "999B",
+    "show": "value"
+   }
+  },
+  "ContentsCode": {
+   "label": "statistikkvariabel",
+   "category": {
+    "index": {
+     "Personer": 0
+    },
+    "label": {
+     "Personer": "Personer"
+    },
+    "unit": {
+     "Personer": {
+      "base": "antall",
+      "decimals": 0
+     }
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "refperiod": {
+     "Personer": "31.12. t.o.m. 1990, deretter 1.1."
+    },
+    "show": "value",
+    "measuringType": {
+     "Personer": "Stock"
+    },
+    "priceType": {
+     "Personer": "NotApplicable"
+    },
+    "adjustment": {
+     "Personer": "None"
+    },
+    "alternativeText": {
+     "Personer": "Personer"
+    }
+   }
+  },
+  "Tid": {
+   "label": "år",
+   "category": {
+    "index": {
+     "2020": 0,
+     "2021": 1,
+     "2022": 2,
+     "2023": 3,
+     "2024": 4,
+     "2025": 5
+    },
+    "label": {
+     "2020": "2020",
+     "2021": "2021",
+     "2022": "2022",
+     "2023": "2023",
+     "2024": "2024",
+     "2025": "2025"
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "code"
+   }
+  }
+ },
+ "extension": {
+  "px": {
+   "infofile": "None",
+   "tableid": "05810",
+   "decimals": 0,
+   "official-statistics": true,
+   "aggregallowed": true,
+   "copyright": false,
+   "language": "no",
+   "contents": "05810: Befolkning,",
+   "descriptiondefault": false,
+   "heading": [
+    "ContentsCode",
+    "Tid"
+   ],
+   "stub": [
+    "Kjonn",
+    "Alder"
+   ],
+   "matrix": "05810",
+   "subject-code": "be",
+   "subject-area": "Befolkning"
+  },
+  "discontinued": null,
+  "contact": [
+   {
+    "name": "Magnus Haug",
+    "organization": "Statistisk sentralbyrå",
+    "phone": "40 81 14 91",
+    "mail": "mgh@ssb.no",
+    "raw": "Magnus Haug, Statistisk sentralbyrå# +47 40 81 14 91#mgh@ssb.no"
+   }
+  ]
+ },
+ "value": [
+  5367580,
+  5391369,
+  5425270,
+  5488984,
+  5550203,
+  5594340,
+  412551,
+  404800,
+  401490,
+  398145,
+  393296,
+  390630,
+  580984,
+  580047,
+  579581,
+  583568,
+  585985,
+  581299,
+  2045028,
+  2045163,
+  2053674,
+  2084456,
+  2111765,
+  2130051,
+  1501597,
+  1511702,
+  1519562,
+  1530972,
+  1543676,
+  1554724,
+  596710,
+  613250,
+  630670,
+  645483,
+  658996,
+  667099,
+  230710,
+  236407,
+  240293,
+  246360,
+  256485,
+  270537
+ ]
+}
