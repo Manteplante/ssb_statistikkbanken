@@ -1,4 +1,4 @@
-# ssb-statistikkbanken
+# SSB-statistikkbanken
 
 A Python wrapper around [SSB](https://www.ssb.no)'s Statistikkbanken
 ([PxWebApi v2](https://www.ssb.no/api/pxwebapiv2)) and the
@@ -9,6 +9,20 @@ The point of it is that a query returns a frame you can analyse immediately:
 tidy long, correctly typed, with codes and labels in separate columns — no
 `.iloc` surgery, no splitting `"0301: Oslo"` back apart, no hand-maintained
 lookup tables for region names.
+
+## Contents
+
+- [Quickstart](#quickstart)
+- [Use this as a library](#use-this-as-a-library)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Layout](#layout)
+- [Development](#development)
+- [The notebooks in `eda/` and `maps/`](#the-notebooks-in-eda-and-maps)
+- [Exploring data in Jupyter](#exploring-data-in-jupyter)
+- [Cheat sheet](#cheat-sheet)
+- [References](#references)
+- [License](#license)
 
 ## Quickstart
 
@@ -48,30 +62,44 @@ pop.groupby("fylke", as_index=False)["value"].sum()
 
 Full API reference: [`src/README.md`](src/README.md).
 
-## Using this from another repo
+## Use this as a library
 
 It's a real installable package (`src/ssb_statistikkbanken/`), so a Streamlit
-app, a pipeline, or any other repo on your machine can depend on it directly
-from GitHub — no PyPI, nothing published, this repo stays private:
+app, a pipeline, or any other project on your machine can depend on it
+directly from GitHub — no PyPI, nothing published, this repo stays private.
+
+**1. Add it** — from the other project:
 
 ```bash
 uv add "git+https://github.com/Manteplante/ssb_statistikkbanken" --branch main
 ```
 
+**2. Import it** — exactly like the Quickstart above:
+
 ```python
 from ssb_statistikkbanken import SSB, klass
+
+ssb = SSB()
+df = ssb.fetch("05810", Kjonn="0", Alder="*", time=range(2020, 2026))
 ```
 
-Whatever already lets you `git clone` this repo (VS Code's GitHub auth, an SSH
-key, a stored PAT) is all `uv add` needs too — nothing extra to configure. The
-consuming repo tracks `main`, so a change here shows up there after:
+**3. Auth** — nothing extra to configure. `uv add` shells out to `git`, so
+whatever already lets you `git clone` this repo on that machine (VS Code's
+GitHub auth, an SSH key, a stored PAT) is sufficient. Since the repo is
+private, anyone else who wants to add it needs to be a GitHub collaborator
+first.
+
+**4. Pick up a later change here** — the consuming repo tracks `main`, so:
 
 ```bash
 uv lock --upgrade-package ssb-statistikkbanken
 ```
 
-Since it's private, anyone else who wants to add it needs to be a GitHub
-collaborator on this repo first.
+pip works the same way, if that's what the other project uses:
+
+```bash
+pip install "git+https://github.com/Manteplante/ssb_statistikkbanken@main"
+```
 
 ## Requirements
 
