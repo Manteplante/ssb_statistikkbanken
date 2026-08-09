@@ -26,7 +26,7 @@ test-net:  ## Live smoke tests against SSB and KLASS (needs network)
 check: lint typecheck test  ## Everything CI runs, in CI's order
 
 coverage:  ## Offline suite with an HTML report in htmlcov/
-	uv run pytest --cov=src --cov-report=term-missing --cov-report=html
+	uv run pytest --cov=ssb_statistikkbanken --cov-report=term-missing --cov-report=html
 
 kernel:  ## Register this repo's venv as a Jupyter kernel (idempotent)
 	uv run python -m ipykernel install --user --name ssb-statistikkbanken \

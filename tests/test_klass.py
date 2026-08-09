@@ -10,7 +10,7 @@ import pytest
 import requests
 import responses
 
-from src import Classification, Klass, KlassError, attach_names, attach_parent
+from ssb_statistikkbanken import Classification, Klass, KlassError, attach_names, attach_parent
 
 FIXTURES = Path(__file__).parent / "fixtures" / "klass"
 BASE = "https://data.ssb.no/api/klass/v1"

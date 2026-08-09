@@ -84,20 +84,20 @@ def fake_api() -> FakePxApi:
 
 @pytest.fixture
 def ssb(fake_api: FakePxApi):
-    from src import SSB
+    from ssb_statistikkbanken import SSB
 
     return SSB(api=fake_api)
 
 
 @pytest.fixture
 def info_05810():
-    from src import parse_metadata
+    from ssb_statistikkbanken import parse_metadata
 
     return parse_metadata("05810", load("pxweb", "05810_metadata.json"))
 
 
 @pytest.fixture
 def info_07459():
-    from src import parse_metadata
+    from ssb_statistikkbanken import parse_metadata
 
     return parse_metadata("07459", load("pxweb", "07459_metadata.json"))

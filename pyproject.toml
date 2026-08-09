@@ -33,16 +33,17 @@ notebook = [
 ]
 
 [tool.uv]
-# The wrapper is imported from source (`from src import SSB`), never installed,
-# so there is nothing to build. This also means no [build-system] is needed.
-package = false
 default-groups = ["dev", "notebook"]
+
+[build-system]
+# Installed editable into .venv on `uv sync`, so `import ssb_statistikkbanken`
+# works with no sys.path hack -- and installable elsewhere via
+# `uv add git+https://github.com/Manteplante/ssb_statistikkbanken`.
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Puts the repo root on sys.path before conftest is imported, so `from src import ...`
-# resolves no matter which directory pytest is invoked from.
-pythonpath = ["."]
 addopts = "-q --strict-markers --strict-config -m 'not network'"
 markers = [
     "network: hits the live SSB/KLASS APIs (deselected by default; run with -m network)",
@@ -80,7 +81,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["ssb_statistikkbanken"]
 
 [tool.mypy]
 python_version = "3.12"

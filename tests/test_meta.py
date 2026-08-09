@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from src import UnknownVariableError
+from ssb_statistikkbanken import UnknownVariableError
 
 
 def test_variables_keep_ssb_order(info_05810):

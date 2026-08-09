@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 from pandas.api import types as ptypes
 
-from src import SSB, TableNotFoundError, klass
+from ssb_statistikkbanken import SSB, TableNotFoundError, klass
 
 pytestmark = pytest.mark.network
 

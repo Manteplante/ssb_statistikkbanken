@@ -5,7 +5,7 @@ job here is turning the region codes that come out of a Statistikkbanken fetch
 into names you can join, label or map with -- without regex-stripping codes out
 of strings or maintaining a rename dict by hand.
 
->>> from src import SSB, klass
+>>> from ssb_statistikkbanken import SSB, klass
 >>> pop = SSB().fetch("11342", Region="*", contents="Folkemengde")   # doctest: +SKIP
 >>> pop = klass.attach_names(pop, "Region_code", klass.Classification.FYLKE)  # doctest: +SKIP
 """
