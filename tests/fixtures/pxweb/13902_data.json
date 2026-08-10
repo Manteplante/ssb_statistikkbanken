@@ -1,0 +1,208 @@
+{
+ "version": "2.0",
+ "class": "dataset",
+ "label": "13902: Bygninger og veger, etter region, type naturfare og år",
+ "source": "Statistisk sentralbyrå",
+ "updated": "2026-07-03T06:00:00Z",
+ "note": [
+  "Kartlagte naturfarearealer lastet ned fra geonorge.no aktuelt år. Farearealene er ikke fullstendig kartlagt og dekningsgraden kan utvides fra år til år, se [Om statistikken](https://www.ssb.no/arealstat) og metadata på [geonorge.no](https://www.geonorge.no/).  \nSamlekategoriene for naturfare og aktsomhetsområder for denne tabellen er uten klimapådrag."
+ ],
+ "role": {
+  "time": [
+   "Tid"
+  ],
+  "geo": [
+   "Region"
+  ],
+  "metric": [
+   "ContentsCode"
+  ]
+ },
+ "id": [
+  "Region",
+  "Naturfare",
+  "ContentsCode",
+  "Tid"
+ ],
+ "size": [
+  1,
+  2,
+  2,
+  1
+ ],
+ "dimension": {
+  "Region": {
+   "label": "region",
+   "note": [
+    "[Se liste over endringer i de regionale inndelingene](https://www.ssb.no/offentlig-sektor/kommunekatalog/endringer-i-de-regionale-inndelingene)."
+   ],
+   "category": {
+    "index": {
+     "0301": 0
+    },
+    "label": {
+     "0301": "Oslo - Oslove"
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "code_value"
+   },
+   "link": {
+    "describedby": [
+     {
+      "extension": {
+       "Region": "urn:ssb:classification:klass:104 urn:ssb:classification:klass:131"
+      }
+     }
+    ]
+   }
+  },
+  "Naturfare": {
+   "label": "type naturfare",
+   "note": [
+    "Farearealene kan overlappe. Summering på tvers kan gi dobbelttelling. Naturfaretypene er gitt ut fra hvilke type områder som er kartlagt og tilgjengeliggjort på <https://www.geonorge.no>."
+   ],
+   "category": {
+    "index": {
+     "01_flom20": 0,
+     "08_skredfare100": 1
+    },
+    "label": {
+     "01_flom20": "Flom, 20-årsflom",
+     "08_skredfare100": "Skredfare, 100-årsskred"
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "value"
+   },
+   "link": {
+    "describedby": [
+     {
+      "extension": {
+       "Naturfare": "urn:ssb:classification:klass:720"
+      }
+     }
+    ]
+   }
+  },
+  "ContentsCode": {
+   "label": "statistikkvariabel",
+   "category": {
+    "index": {
+     "Bygninger": 0,
+     "Veger": 1
+    },
+    "label": {
+     "Bygninger": "Bygninger",
+     "Veger": "Veger (km)"
+    },
+    "note": {
+     "Bygninger": [
+      "Bygninger fra register per 1. januar."
+     ],
+     "Veger": [
+      "Offentlige veger per 1. januar."
+     ]
+    },
+    "unit": {
+     "Bygninger": {
+      "base": "antall",
+      "decimals": 0
+     },
+     "Veger": {
+      "base": "km",
+      "decimals": 1
+     }
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "refperiod": {
+     "Bygninger": "01.01.",
+     "Veger": "01.01."
+    },
+    "show": "value",
+    "measuringType": {
+     "Bygninger": "Stock",
+     "Veger": "Stock"
+    },
+    "priceType": {
+     "Bygninger": "NotApplicable",
+     "Veger": "NotApplicable"
+    },
+    "adjustment": {
+     "Bygninger": "None",
+     "Veger": "None"
+    },
+    "alternativeText": {
+     "Bygninger": "Bygninger",
+     "Veger": "Veger (km)"
+    }
+   }
+  },
+  "Tid": {
+   "label": "år",
+   "category": {
+    "index": {
+     "2026": 0
+    },
+    "label": {
+     "2026": "2026"
+    }
+   },
+   "extension": {
+    "elimination": false,
+    "show": "code"
+   }
+  }
+ },
+ "extension": {
+  "px": {
+   "infofile": "None",
+   "tableid": "13902",
+   "decimals": 0,
+   "official-statistics": true,
+   "aggregallowed": true,
+   "copyright": false,
+   "language": "no",
+   "contents": "13902: Bygninger og veger,",
+   "descriptiondefault": false,
+   "heading": [
+    "ContentsCode",
+    "Tid"
+   ],
+   "stub": [
+    "Region",
+    "Naturfare"
+   ],
+   "matrix": "13902",
+   "subject-code": "nm",
+   "subject-area": "Natur og miljø"
+  },
+  "discontinued": null,
+  "contact": [
+   {
+    "name": "Erik Engelien",
+    "organization": "Statistisk sentralbyrå",
+    "phone": "91 12 55 45",
+    "mail": "eer@ssb.no",
+    "raw": "Erik Engelien, Statistisk sentralbyrå# +47 91 12 55 45#eer@ssb.no"
+   },
+   {
+    "name": "Anne Rørholt",
+    "organization": "Statistisk sentralbyrå",
+    "phone": "90 08 67 46",
+    "mail": "ner@ssb.no",
+    "raw": "Anne Rørholt, Statistisk sentralbyrå# +47 90 08 67 46#ner@ssb.no"
+   }
+  ]
+ },
+ "value": [
+  2,
+  0.2,
+  0,
+  0
+ ]
+}
