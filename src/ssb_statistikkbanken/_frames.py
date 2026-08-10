@@ -216,6 +216,23 @@ class Dataset:
     query: dict[str, list[str]] = field(default_factory=dict)
     code_list: dict[str, str] = field(default_factory=dict)
 
+    def _use_integer_values(self) -> bool:
+        """Whether the value column really can be held as an integer.
+
+        SSB's ``decimals`` is a *table-level* hint, but a table can mix units
+        across ContentsCode -- 13902 reports ``decimals=0`` while pairing
+        building counts with road length in km (0.2, 0.7). Trusting the hint
+        made pandas raise and made polars silently truncate 0.2 to 0, so the
+        data gets the final say.
+        """
+        if not self.spec.integer_value:
+            return False
+        return not any(
+            isinstance(row.get(self.spec.value_column), float)
+            and not row[self.spec.value_column].is_integer()
+            for row in self.rows
+        )
+
     def __len__(self) -> int:
         return len(self.rows)
 
@@ -242,7 +259,7 @@ class Dataset:
 
         value = pd.to_numeric(frame[self.spec.value_column], errors="coerce")
         frame[self.spec.value_column] = value.astype(
-            "Int64" if self.spec.integer_value else "Float64"
+            "Int64" if self._use_integer_values() else "Float64"
         )
 
         if self.spec.year_column:
@@ -271,7 +288,7 @@ class Dataset:
             ) from exc
 
         schema: dict[str, Any] = {
-            self.spec.value_column: pl.Int64 if self.spec.integer_value else pl.Float64
+            self.spec.value_column: pl.Int64 if self._use_integer_values() else pl.Float64
         }
         if self.spec.year_column:
             schema[self.spec.year_column] = pl.Int16

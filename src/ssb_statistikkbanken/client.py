@@ -150,6 +150,11 @@ class SSB:
     ) -> pd.DataFrame:
         """Find tables by free-text search over titles, variables and values.
 
+        The search covers **value labels**, not just titles, so a hit can be
+        unrelated to what you meant -- ``"skred"`` matches a table of surnames
+        because one surname contains it. Read the ``label`` column before
+        trusting a match.
+
         Parameters
         ----------
         query:
@@ -390,7 +395,15 @@ class SSB:
                 stacklevel=2,
             )
 
-        with wrap_pxweb_errors(table_id=str(table_id), endpoint="/data"):
+        # An unknown code list id comes back as a detail-free 500, so name the
+        # likeliest culprit when one was supplied.
+        hint = (
+            f"check the code list id(s) {sorted(selection.code_list.values())} "
+            f"against ssb.variables({table_id!r})"
+            if selection.code_list
+            else None
+        )
+        with wrap_pxweb_errors(table_id=str(table_id), endpoint="/data", hint=hint):
             records = self._api(language).get_table_data(
                 str(table_id),
                 value_codes=dict(selection.value_codes),

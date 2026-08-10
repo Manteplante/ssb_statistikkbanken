@@ -49,6 +49,21 @@ class TestWrapping:
             with wrap_pxweb_errors(table_id="05810"):
                 raise HTTPError(pxweb_message(status, "reason"))
 
+    def test_a_server_error_says_so_and_can_carry_a_hint(self):
+        # SSB answers an unknown code list id with a detail-free 500, so the
+        # message has to supply what the response does not. F-04.
+        with pytest.raises(SsbHTTPError) as excinfo:
+            with wrap_pxweb_errors(table_id="14346", hint="check the code list id"):
+                raise HTTPError(pxweb_message(500, "Internal Server Error"))
+        assert excinfo.value.status_code == 500
+        assert "server error (HTTP 500)" in str(excinfo.value)
+        assert "check the code list id" in str(excinfo.value)
+
+    def test_a_server_error_without_a_hint_is_still_readable(self):
+        with pytest.raises(SsbHTTPError, match="server error"):
+            with wrap_pxweb_errors():
+                raise HTTPError(pxweb_message(503, "Service Unavailable"))
+
     def test_unknown_status_still_becomes_an_ssb_error(self):
         with pytest.raises(SsbHTTPError) as excinfo:
             with wrap_pxweb_errors():

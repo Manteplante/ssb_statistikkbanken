@@ -91,6 +91,63 @@ class TestCodes:
             klass.codes(9999)
 
 
+class TestRetiredClassifications:
+    """KLASS answers an out-of-window date with an empty list, not an error.
+
+    Classification 129 was retired in 2019, so asking for 2025 used to yield a
+    silent empty frame -- and an empty mapping() turns every downstream join
+    into NaN with no clue why. See TESTING_AND_IMPROVEMENTS.md F-01.
+    """
+
+    def stub_empty_with_window(self):
+        responses.add(responses.GET, f"{BASE}/classifications/129/codesAt", json={"codes": []})
+        responses.add(
+            responses.GET,
+            f"{BASE}/classifications/129",
+            json={
+                "name": "Kommuneklassifisering",
+                "versions": [
+                    {
+                        "name": "Kommuneklassifisering 1994-10",
+                        "id": 470,
+                        "validFrom": "1994-10-01",
+                        "validTo": "2019-01-01",
+                    }
+                ],
+            },
+        )
+
+    @responses.activate
+    def test_an_empty_result_warns_with_the_validity_window(self, klass):
+        self.stub_empty_with_window()
+        with pytest.warns(UserWarning, match="1994-10-01 -> 2019-01-01"):
+            frame = klass.codes(129, date=2025)
+        assert frame.empty
+
+    @responses.activate
+    def test_mapping_warns_too_rather_than_returning_a_silent_empty_dict(self, klass):
+        self.stub_empty_with_window()
+        with pytest.warns(UserWarning, match="no codes"):
+            assert klass.mapping(129, date=2025) == {}
+
+    @responses.activate
+    def test_a_non_empty_result_stays_silent(self, klass, recwarn):
+        stub("/classifications/104/codesAt", "104_codesAt_2025.json")
+        assert not klass.codes(Classification.FYLKE, date=2025).empty
+        assert not [w for w in recwarn if "no codes" in str(w.message)]
+
+    @responses.activate
+    def test_a_failing_versions_lookup_does_not_mask_the_result(self, klass):
+        # The window is only diagnostics; if it 404s the caller still gets a frame.
+        responses.add(responses.GET, f"{BASE}/classifications/129/codesAt", json={"codes": []})
+        responses.add(
+            responses.GET, f"{BASE}/classifications/129", json={"detail": "x"}, status=404
+        )
+        with pytest.warns(UserWarning, match="no codes"):
+            frame = klass.codes(129, date=2025)
+        assert frame.empty
+
+
 class TestCorrespondence:
     @responses.activate
     def test_kommune_maps_onto_fylke(self, klass):

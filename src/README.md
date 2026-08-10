@@ -67,6 +67,12 @@ ssb.fetch("07459", Region="0301", code_list={"Alder": "agg_FemAarigGruppering"})
 
 Defaults worth knowing:
 
+- **`search()` matches value labels, not just titles** — a hit can be unrelated
+  to the query (`"skred"` matches a table of surnames). Check `label` before
+  trusting a match.
+- **`decimals` is a hint, not a promise** — SSB reports it per *table*, but a
+  table can mix units across `ContentsCode` (counts plus km). The `value`
+  column falls back to `Float64` when the data disagrees with the hint.
 - **`latest=1`** — with no time selection you get the most recent period, not
   the entire history.
 - **Mandatory variables you leave out are selected in full** (`*`). Variables

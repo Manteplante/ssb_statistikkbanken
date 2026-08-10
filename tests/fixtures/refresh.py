@@ -35,9 +35,18 @@ DATA_QUERIES: dict[str, dict[str, list[str]]] = {
         "ContentsCode": ["Folkemengde"],
         "Tid": ["2025"],
     },
+    # Mixed units under one ContentsCode: building counts (integers) alongside
+    # road length in km (0.2, 0.7), while the table reports decimals=0. Guards
+    # the regression where that hint was trusted over the actual values.
+    "13902": {
+        "Region": ["0301"],
+        "Naturfare": ["01_flom20", "08_skredfare100"],
+        "ContentsCode": ["Bygninger", "Veger"],
+        "Tid": ["2026"],
+    },
 }
 
-METADATA_TABLES = ["05810", "11342", "07459"]
+METADATA_TABLES = ["05810", "11342", "07459", "13902"]
 
 
 def _write(path: Path, payload: object) -> None:

@@ -304,7 +304,38 @@ class Klass:
                 ],
             )
 
-        return self._cached(key, build)
+        frame = self._cached(key, build)
+        if frame.empty:
+            self._warn_empty(classification_id, params.get("date") or params.get("from"))
+        return frame
+
+    def _warn_empty(self, classification_id: int, asked_for: str | None) -> None:
+        """Explain a zero-code answer, which KLASS gives instead of an error.
+
+        A retired classification (or a date before it existed) comes back as an
+        empty list, so ``mapping()`` yields ``{}`` and every downstream join
+        silently becomes NaN. Name the validity window so the date is fixable.
+        """
+        window = ""
+        try:
+            versions = self.versions(classification_id)
+            if not versions.empty:
+                first = versions["validFrom"].dropna()
+                last = versions["validTo"].dropna()
+                start = first.iloc[0] if len(first) else "?"
+                end = last.iloc[-1] if len(last) else "still valid"
+                window = f" It is only valid {start} -> {end}."
+        except KlassError:  # pragma: no cover - diagnostics must never mask the result
+            pass
+
+        warnings.warn(
+            f"KLASS returned no codes for classification {classification_id}"
+            + (f" at {asked_for}." if asked_for else ".")
+            + window
+            + " Check the date -- an empty result makes downstream joins silently NaN.",
+            UserWarning,
+            stacklevel=3,
+        )
 
     def mapping(self, classification: int | Classification, **kwargs: Any) -> dict[str, str]:
         """``{code: name}`` for a classification -- the shape most joins want."""

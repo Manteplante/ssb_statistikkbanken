@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 
 # Recorded API responses are test data, not artefacts; other JSON is noise.
+# Keeping them tracked is what lets CI run the suite fully offline and a fresh
+# clone work immediately (~44 KB of git objects).
 *.json
 !tests/fixtures/**/*.json
 

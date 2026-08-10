@@ -165,9 +165,26 @@ def parse_pxweb_message(message: str) -> tuple[int | None, str | None]:
 
 
 def _build(
-    status: int | None, detail: str | None, message: str, table_id: str | None, endpoint: str | None
+    status: int | None,
+    detail: str | None,
+    message: str,
+    table_id: str | None,
+    endpoint: str | None,
+    hint: str | None = None,
 ) -> SsbHTTPError:
     suffix = f" ({detail})" if detail else ""
+
+    if status is not None and status >= 500:
+        # SSB answers some *client* mistakes with a server error and no detail
+        # body -- notably an unknown code list id. Say so, since the response
+        # itself carries nothing the user can act on.
+        return SsbHTTPError(
+            f"SSB returned a server error (HTTP {status}).{suffix}"
+            + (f"\n  Tip: {hint}" if hint else ""),
+            status_code=status,
+            detail=detail,
+            endpoint=endpoint,
+        )
 
     if status == 404:
         where = f"table '{table_id}'" if table_id else f"resource '{endpoint}'"
@@ -200,15 +217,19 @@ def _build(
 
 @contextmanager
 def wrap_pxweb_errors(
-    *, table_id: str | None = None, endpoint: str | None = None
+    *, table_id: str | None = None, endpoint: str | None = None, hint: str | None = None
 ) -> Iterator[None]:
-    """Translate pxwebpy/requests failures into this package's exception types."""
+    """Translate pxwebpy/requests failures into this package's exception types.
+
+    ``hint`` is appended to server-error messages, where SSB's own response
+    usually carries nothing actionable.
+    """
     try:
         yield
     except HTTPError as exc:
         message = str(exc)
         status, detail = parse_pxweb_message(message)
-        raise _build(status, detail, message, table_id, endpoint) from exc
+        raise _build(status, detail, message, table_id, endpoint, hint) from exc
     except ValueError as exc:
         # pxwebpy validates value_codes types and the `show` argument itself.
         raise SsbError(str(exc)) from exc

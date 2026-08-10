@@ -98,3 +98,17 @@ class TestFetch:
     def test_filters_dict_works_for_awkward_variable_codes(self, ssb, fake_api):
         ssb.fetch("05810", {"Kjonn": "0"})
         assert fake_api.last_call["value_codes"]["Kjonn"] == ["0"]
+
+    def test_a_code_list_failure_names_the_code_list_in_the_error(self, ssb, fake_api, monkeypatch):
+        # SSB returns a detail-free 500 for an unknown code list id, so the
+        # wrapper has to point at the likely culprit itself. F-04.
+        from requests.exceptions import HTTPError
+
+        from ssb_statistikkbanken import SsbHTTPError
+
+        def boom(*args, **kwargs):
+            raise HTTPError("Error 500: Internal Server Error\nDetail: None")
+
+        monkeypatch.setattr(fake_api, "get_table_data", boom)
+        with pytest.raises(SsbHTTPError, match="agg_FemAarigGruppering"):
+            ssb.fetch("07459", Region="0301", code_list={"Alder": "agg_FemAarigGruppering"})

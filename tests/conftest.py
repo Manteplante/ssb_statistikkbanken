@@ -101,3 +101,11 @@ def info_07459():
     from ssb_statistikkbanken import parse_metadata
 
     return parse_metadata("07459", load("pxweb", "07459_metadata.json"))
+
+
+@pytest.fixture
+def info_13902():
+    """A table that reports decimals=0 but mixes counts with km values."""
+    from ssb_statistikkbanken import parse_metadata
+
+    return parse_metadata("13902", load("pxweb", "13902_metadata.json"))

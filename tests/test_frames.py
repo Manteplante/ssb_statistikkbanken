@@ -126,3 +126,87 @@ class TestFloatTables:
         rows, spec = normalize_records([{"år": "2024: 2024", "value": 1.5}], info)
         frame = Dataset(rows=rows, spec=spec, info=info).to_pandas()
         assert ptypes.is_float_dtype(frame["value"])
+
+
+class TestMixedUnitTables:
+    """Regression cover for a real table whose decimals hint contradicts its data.
+
+    13902 reports decimals=0 but pairs building counts with road length in km.
+    Trusting the hint made pandas raise TypeError and made polars silently
+    truncate 0.2 to 0 -- see TESTING_AND_IMPROVEMENTS.md F-05.
+    """
+
+    @pytest.fixture
+    def mixed(self, info_13902):
+        records = [
+            {
+                "region": "0301: Oslo",
+                "statistikkvariabel": "Bygninger",
+                "år": "2026: 2026",
+                "value": 2,
+            },
+            {
+                "region": "0301: Oslo",
+                "statistikkvariabel": "Veger",
+                "år": "2026: 2026",
+                "value": 0.2,
+            },
+        ]
+        rows, spec = normalize_records(records, info_13902)
+        return Dataset(rows=rows, spec=spec, info=info_13902)
+
+    def test_the_hint_really_does_claim_integers(self, mixed):
+        assert mixed.info.decimals == 0
+        assert mixed.spec.integer_value is True
+
+    def test_to_pandas_falls_back_to_float_instead_of_raising(self, mixed):
+        frame = mixed.to_pandas()
+        assert ptypes.is_float_dtype(frame["value"])
+        assert frame["value"].tolist() == [2.0, 0.2]
+
+    def test_to_polars_does_not_silently_truncate(self, mixed):
+        pl = pytest.importorskip("polars")
+        frame = mixed.to_polars()
+        assert frame.schema["value"] == pl.Float64
+        assert frame["value"].to_list() == [2.0, 0.2]
+
+    def test_a_genuinely_integer_selection_still_gets_int64(self, info_13902):
+        # Only the counts statistic: the hint and the data agree, so keep Int64.
+        records = [
+            {
+                "region": "0301: Oslo",
+                "statistikkvariabel": "Bygninger",
+                "år": "2026: 2026",
+                "value": 2,
+            },
+        ]
+        rows, spec = normalize_records(records, info_13902)
+        frame = Dataset(rows=rows, spec=spec, info=info_13902).to_pandas()
+        assert ptypes.is_integer_dtype(frame["value"])
+
+    def test_whole_floats_are_not_demoted(self, info_13902):
+        # 4.0 is integral, so there is no reason to lose Int64 over it.
+        records = [
+            {
+                "region": "0301: Oslo",
+                "statistikkvariabel": "Bygninger",
+                "år": "2026: 2026",
+                "value": 4.0,
+            },
+        ]
+        rows, spec = normalize_records(records, info_13902)
+        frame = Dataset(rows=rows, spec=spec, info=info_13902).to_pandas()
+        assert ptypes.is_integer_dtype(frame["value"])
+
+    def test_nulls_do_not_trigger_the_fallback(self, info_13902):
+        records = [
+            {
+                "region": "0301: Oslo",
+                "statistikkvariabel": "Bygninger",
+                "år": "2026: 2026",
+                "value": None,
+            },
+        ]
+        rows, spec = normalize_records(records, info_13902)
+        frame = Dataset(rows=rows, spec=spec, info=info_13902).to_pandas()
+        assert ptypes.is_integer_dtype(frame["value"])
