@@ -12,7 +12,10 @@ from __future__ import annotations
 import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Protocol
+from typing import Any, Protocol
+
+import pandas as pd
+from pxweb import PxApi
 
 from ._frames import SHOW_FOR_LABELS, Columns, Dataset, Labels, normalize_records
 from ._meta import TableInfo, Variable, parse_metadata
@@ -27,9 +30,6 @@ from .config import (
     SSB_MAX_DATA_CELLS,
 )
 from .errors import wrap_pxweb_errors
-
-if TYPE_CHECKING:  # pragma: no cover
-    import pandas as pd
 
 __all__ = ["SSB", "PxApiLike", "Table"]
 
@@ -119,8 +119,6 @@ class SSB:
         """
         lang = language or self.language
         if lang not in self._apis:
-            from pxweb import PxApi
-
             with wrap_pxweb_errors(endpoint="/config"):
                 self._apis[lang] = PxApi(
                     SSB_API,
@@ -171,8 +169,6 @@ class SSB:
         A frame with ``id``, ``label``, ``updated``, ``firstPeriod``,
         ``lastPeriod``, ``timeUnit``, ``variables``, ``path`` and ``source``.
         """
-        import pandas as pd
-
         with wrap_pxweb_errors(endpoint="/tables"):
             response = self._api(language).search(
                 query=query,
@@ -228,8 +224,6 @@ class SSB:
         Note this downloads the full table index (several thousand rows) on
         first use; :meth:`search` is usually the faster way in.
         """
-        import pandas as pd
-
         with wrap_pxweb_errors(endpoint="/tables"):
             found = self._api(language).get_paths(path)
         return pd.DataFrame(
@@ -242,8 +236,6 @@ class SSB:
 
         Like :meth:`paths`, this downloads the full table index on first use.
         """
-        import pandas as pd
-
         with wrap_pxweb_errors(endpoint="/tables"):
             found = self._api(language).tables_on_path(path)
         return pd.DataFrame(
@@ -269,8 +261,6 @@ class SSB:
 
     def variables(self, table_id: str, *, language: str | None = None) -> pd.DataFrame:
         """One row per variable: its code, label, size and whether it is mandatory."""
-        import pandas as pd
-
         info = self.describe(table_id, language=language)
         rows = []
         for code in info.order:
@@ -307,8 +297,6 @@ class SSB:
         label, case-insensitively, which is how you find one municipality among
         356 without scrolling.
         """
-        import pandas as pd
-
         info = self.describe(table_id, language=language)
         wanted = [info.require(variable)] if variable is not None else info.order
 
@@ -329,8 +317,6 @@ class SSB:
 
     def code_list(self, code_list_id: str, *, language: str | None = None) -> pd.DataFrame:
         """The values of a named code list (an SSB aggregation or value set)."""
-        import pandas as pd
-
         with wrap_pxweb_errors(endpoint=f"/codelists/{code_list_id}"):
             response = self._api(language).get_code_list(code_list_id)
         return pd.DataFrame(

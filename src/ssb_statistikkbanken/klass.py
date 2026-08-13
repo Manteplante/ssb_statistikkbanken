@@ -16,16 +16,14 @@ import datetime as _dt
 import warnings
 from collections.abc import Callable
 from enum import IntEnum
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import Any, Literal, cast
 
+import pandas as pd
 import requests
 from requests_cache import CachedSession
 
 from .config import DEFAULT_TIMEOUT, KLASS_BASE_URL, KLASS_CACHE_TTL, KLASS_DEFAULT_LANGUAGE
 from .errors import ClassificationNotFoundError, KlassError
-
-if TYPE_CHECKING:  # pragma: no cover
-    import pandas as pd
 
 __all__ = [
     "Classification",
@@ -159,7 +157,6 @@ class Klass:
 
         ``search`` filters on the name, case-insensitively.
         """
-        import pandas as pd
 
         def build() -> pd.DataFrame:
             payload = self._get(
@@ -193,7 +190,6 @@ class Klass:
 
     def versions(self, classification: int | Classification) -> pd.DataFrame:
         """The dated vintages of a classification -- one row per version."""
-        import pandas as pd
 
         def build() -> pd.DataFrame:
             payload = self.info(classification)
@@ -216,8 +212,6 @@ class Klass:
         self, classification: int | Classification, *, date: str | int | _dt.date | None = None
     ) -> pd.DataFrame:
         """Named variants (alternative groupings) available at a point in time."""
-        import pandas as pd
-
         target = _as_date(date)
         versions = self.versions(classification)
         match = versions[
@@ -260,8 +254,6 @@ class Klass:
         validity intervals. ``level=1`` keeps only the top level, and
         ``select_codes="03*"`` filters by code pattern.
         """
-        import pandas as pd
-
         classification_id = int(classification)
         params: dict[str, Any] = {"selectLevel": level, "selectCodes": select_codes}
 
@@ -355,8 +347,6 @@ class Klass:
 
         The canonical use is kommune (131) to fylke (104).
         """
-        import pandas as pd
-
         source_id, target_id = int(source), int(target)
         params: dict[str, Any] = {"targetClassificationId": target_id}
         if from_ is not None or to is not None:
@@ -393,8 +383,6 @@ class Klass:
         to: str | int | _dt.date | None = None,
     ) -> pd.DataFrame:
         """Codes that were added, removed or renumbered between two dates."""
-        import pandas as pd
-
         classification_id = int(classification)
         params = {"from": _as_date(from_), "to": _as_date(to)}
         key = ("changes", classification_id, tuple(sorted(params.items())), self.language)

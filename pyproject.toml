@@ -57,7 +57,6 @@ target-version = "py312"
 # eda/, including new notebooks scaffolded via `make notebook`, is linted.
 extend-exclude = [
     "maps",
-    "eda/ssb_norwegian_nursing_home_population.ipynb",
     "eda/ssb_norwegian_population_growth.ipynb",
     "eda/ssb_norwegian_population_powerbi_ready.ipynb",
 ]

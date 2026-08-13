@@ -210,3 +210,49 @@ class TestMixedUnitTables:
         rows, spec = normalize_records(records, info_13902)
         frame = Dataset(rows=rows, spec=spec, info=info_13902).to_pandas()
         assert ptypes.is_integer_dtype(frame["value"])
+
+
+class TestToWide:
+    """`pivot_table` sorts alphabetically; SSB publishes a meaningful order.
+
+    For 05810's age bands plain sorting gives 0-6, 16-44, 45-66, 67-79, 7-15,
+    80+ -- with the "Alle" total drifting to the end. to_wide() restores the
+    order SSB ships in category.index.
+    """
+
+    @pytest.fixture
+    def dataset(self, info_05810):
+        records = [
+            {
+                "kjønn": "0: Begge kjønn",
+                "alder": f"{code}: {label}",
+                "år": f"{year}: {year}",
+                "value": n,
+            }
+            for n, (code, label) in enumerate(info_05810["Alder"].values.items())
+            for year in (2024, 2025)
+        ]
+        rows, spec = normalize_records(records, info_05810)
+        return Dataset(rows=rows, spec=spec, info=info_05810)
+
+    def test_columns_follow_ssb_order_not_alphabetical(self, dataset, info_05810):
+        wide = dataset.to_wide()
+        assert list(wide.columns) == info_05810["Alder"].labels
+        # The order plain pandas would have produced, for contrast.
+        assert list(wide.columns) != sorted(info_05810["Alder"].labels)
+
+    def test_time_is_the_default_index(self, dataset):
+        assert dataset.to_wide().index.name == "year"
+
+    def test_columns_can_be_chosen_explicitly(self, dataset, info_05810):
+        wide = dataset.to_wide(columns="Alder_code")
+        assert list(wide.columns) == info_05810["Alder"].codes
+
+    def test_an_unknown_axis_is_refused(self, dataset):
+        with pytest.raises(KeyError, match="nope"):
+            dataset.to_wide(columns="nope")
+
+    def test_values_survive_the_pivot(self, dataset):
+        wide = dataset.to_wide()
+        assert wide.loc[2024, "Alle"] == 0
+        assert not wide.isna().to_numpy().any()

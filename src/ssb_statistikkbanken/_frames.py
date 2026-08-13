@@ -13,12 +13,16 @@ import warnings
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal
 
+import pandas as pd
+
 from ._meta import TableInfo
 from .config import CODE_COLUMN_SUFFIX, CODE_VALUE_SEPARATOR, VALUE_COLUMN
 from .errors import MissingDependencyError
 
 if TYPE_CHECKING:  # pragma: no cover
-    import pandas as pd
+    # polars stays out of the runtime imports on purpose -- it is an optional
+    # dependency, so importing it at module level would make the whole package
+    # unimportable without it. to_polars() imports it lazily instead.
     import polars as pl
 
 __all__ = ["ColumnSpec", "Dataset", "normalize_records"]
@@ -45,6 +49,9 @@ class ColumnSpec:
     date_column: str | None = None
     dimension_columns: tuple[str, ...] = ()
     code_columns: tuple[str, ...] = ()
+    #: Output column name -> SSB variable code, for both label and `_code`
+    #: columns. Lets `to_wide()` recover each column's SSB value ordering.
+    variable_by_column: dict[str, str] = field(default_factory=dict)
 
 
 def _label_to_code(info: TableInfo) -> dict[str, str]:
@@ -152,13 +159,19 @@ def normalize_records(
     dimension_columns: list[str] = []
     code_columns: list[str] = []
     column_order: list[str] = []
+    variable_by_column: dict[str, str] = {}
     for key in ordered_keys:
         name = names[key]
+        variable = code_by_key[key]
         dimension_columns.append(name)
         column_order.append(name)
+        if variable:
+            variable_by_column[name] = variable
         if labels == "both":
             code_columns.append(name + CODE_COLUMN_SUFFIX)
             column_order.append(name + CODE_COLUMN_SUFFIX)
+            if variable:
+                variable_by_column[name + CODE_COLUMN_SUFFIX] = variable
 
     rows: list[dict[str, Any]] = []
     for record in records:
@@ -199,6 +212,7 @@ def normalize_records(
         date_column=date_column,
         dimension_columns=tuple(dimension_columns),
         code_columns=tuple(code_columns),
+        variable_by_column=variable_by_column,
     )
     # Re-emit rows in the declared column order so to_records() is ordered too.
     rows = [{name: row.get(name) for name in spec.columns} for row in rows]
@@ -253,8 +267,6 @@ class Dataset:
         opt-in because categorical dtypes change groupby and plotting behaviour
         in ways that surprise people mid-analysis.
         """
-        import pandas as pd
-
         frame = pd.DataFrame(self.rows, columns=list(self.spec.columns))
 
         value = pd.to_numeric(frame[self.spec.value_column], errors="coerce")
@@ -275,6 +287,88 @@ class Dataset:
                 frame[column] = frame[column].astype("category")
 
         return frame
+
+    def _ssb_order(self, column: str) -> list[str] | None:
+        """SSB's own ordering for a column's values, if it maps to a variable."""
+        variable = self.spec.variable_by_column.get(column)
+        if variable is None or variable not in self.info.variables:
+            return None
+        values = self.info.variables[variable]
+        return values.codes if column.endswith(CODE_COLUMN_SUFFIX) else values.labels
+
+    def _default_wide_axes(self) -> tuple[str, str]:
+        """Pick a sensible index (time) and columns (widest dimension) pair."""
+        index = self.spec.year_column or self.spec.date_column
+        if index is None:
+            time_columns = [
+                c
+                for c in self.spec.dimension_columns
+                if self.spec.variable_by_column.get(c) == self.info.time_variable
+            ]
+            if not time_columns:
+                raise ValueError(
+                    "This table has no time dimension, so to_wide() cannot pick an index. "
+                    "Pass index= and columns= explicitly."
+                )
+            index = time_columns[0]
+
+        # The widest non-time dimension is almost always what you want across
+        # the top -- ContentsCode when several statistics were fetched, else
+        # whichever dimension actually varies.
+        candidates = [
+            c
+            for c in self.spec.dimension_columns
+            if c != index and self.spec.variable_by_column.get(c) != self.info.time_variable
+        ]
+        if not candidates:
+            raise ValueError(
+                "Nothing to spread across the columns -- only one dimension was "
+                "returned. Pass columns= explicitly, or use to_pandas()."
+            )
+        distinct = {c: len({row.get(c) for row in self.rows}) for c in candidates}
+        return index, max(candidates, key=lambda c: distinct[c])
+
+    def to_wide(
+        self,
+        columns: str | None = None,
+        index: str | None = None,
+        *,
+        aggfunc: str = "sum",
+    ) -> pd.DataFrame:
+        """A wide pivot that keeps SSB's own ordering on both axes.
+
+        ``pivot_table`` sorts alphabetically, which mangles ordered categories --
+        age bands come out ``0-6, 16-44, 45-66, 67-79, 7-15, 80+`` and totals
+        like ``Alle`` drift to the end. SSB publishes the intended order in
+        ``category.index``, and this restores it.
+
+        Defaults to time down the side and the widest other dimension across the
+        top, which is the shape most charts want.
+
+        >>> ssb.dataset("05810", Kjonn="0", Alder="*", time=range(2020, 2026)).to_wide()
+        """
+        if index is None or columns is None:
+            default_index, default_columns = self._default_wide_axes()
+            index = index or default_index
+            columns = columns or default_columns
+
+        frame = self.to_pandas()
+        for axis, name in (("index", index), ("columns", columns)):
+            if name not in frame.columns:
+                raise KeyError(f"{axis}={name!r} is not a column. Available: {list(frame.columns)}")
+
+        wide = frame.pivot_table(
+            index=index, columns=columns, values=self.spec.value_column, aggfunc=aggfunc
+        )
+
+        # Restore SSB's ordering, keeping only what the pivot actually produced.
+        if (order := self._ssb_order(columns)) is not None:
+            wide = wide[[value for value in order if value in wide.columns]]
+        if (order := self._ssb_order(index)) is not None:
+            wide = wide.reindex([value for value in order if value in wide.index])
+
+        wide.columns.name = columns
+        return wide
 
     def to_polars(self) -> pl.DataFrame:
         """A polars frame, built straight from the records (no pandas round-trip)."""

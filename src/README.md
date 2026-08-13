@@ -46,7 +46,8 @@ label and a `_code` sibling.
 | `ssb.values(id, var, search=)` | every value code — no truncation |
 | `ssb.code_list(id)` | the members of a named aggregation |
 | `ssb.fetch(id, ...)` | tidy pandas frame |
-| `ssb.dataset(id, ...)` | `Dataset` → `.to_pandas()` / `.to_polars()` / `.to_records()` / `.query` |
+| `ssb.dataset(id, ...)` | `Dataset` → `.to_pandas()` / `.to_wide()` / `.to_polars()` / `.to_records()` / `.query` |
+| `ssb.dataset(id, ...).to_wide()` | wide pivot keeping SSB's own value order (see below) |
 | `ssb.table(id)` | a handle bound to one table |
 | `klass.kommuner()` / `fylker()` / `codes(id, date=)` | KLASS classifications |
 | `klass.attach_names(df, "Region_code", ...)` | authoritative names beside the codes |
@@ -82,6 +83,30 @@ Defaults worth knowing:
   `language="en"` doesn't rename them under your script. `"label"` gives the
   Norwegian names.
 - **`max_cells=`** — refuse a selection bigger than this, before sending it.
+
+## Reshaping to wide
+
+`fetch()` gives tidy long, which is right for filtering and joining. Charts and
+tables usually want wide — and plain `pivot_table` sorts alphabetically, which
+mangles ordered categories:
+
+```python
+df.pivot_table(index="year", columns="Alder", values="value")
+# 0-6 år, 16-44 år, 45-66 år, 67-79 år, 7-15 år, 80 år eller eldre, Alle
+#                                       ^^^^^^^ sorted as text, and the total drifts last
+```
+
+SSB publishes the intended order in `category.index`, so the wrapper can put it
+back:
+
+```python
+ssb.dataset("05810", Kjonn="0", Alder="*", time=range(2020, 2026)).to_wide()
+# Alle, 0-6 år, 7-15 år, 16-44 år, 45-66 år, 67-79 år, 80 år eller eldre
+```
+
+Time goes down the side and the widest other dimension across the top by
+default; override with `to_wide(columns=..., index=...)`. Pass a `*_code` column
+to get codes as headers instead of labels.
 
 ## Errors tell you what to do next
 
