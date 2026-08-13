@@ -70,7 +70,6 @@ print(json.dumps({
                 {"context": c} for c in (
                     "branch flow",
                     "lint + typecheck",
-                    "pytest (py3.12)",
                     "pytest (py3.14)",
                 )
             ],

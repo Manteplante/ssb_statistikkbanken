@@ -147,8 +147,14 @@ the test suite are dramatically slower across the 9p mount.
 | `make fixtures` | re-record the test fixtures |
 
 CI runs ruff, mypy and the offline suite on every push and pull request, on
-Python 3.12 and 3.14. It never calls SSB — run `make test-net` yourself when you
-want to know whether the live API has drifted.
+Python 3.14 — the version `.python-version` pins and everyone here develops on.
+It never calls SSB — run `make test-net` yourself when you want to know whether
+the live API has drifted.
+
+`requires-python` still allows 3.12, and ruff's `target-version` and mypy's
+`python_version` both stay at 3.12 so nothing 3.13+-only can sneak into the
+source. The syntax floor is enforced statically; it just isn't exercised at
+runtime any more.
 
 ## Branching and review
 

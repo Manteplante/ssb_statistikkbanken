@@ -76,10 +76,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      # The two ends of the supported range: the floor from requires-python,
-      # and the version .python-version pins for local development.
+      # A matrix of one: 3.14 is what .python-version pins and what everyone
+      # here develops on. Kept as a matrix so the version appears in the job
+      # name (and so the required status check names it), and so adding a leg
+      # back later is a one-line change.
       matrix:
-        python-version: ["3.12", "3.14"]
+        python-version: ["3.14"]
     steps:
       - uses: actions/checkout@v5
 
