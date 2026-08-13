@@ -18,6 +18,7 @@ lookup tables for region names.
 - [Setup](#setup)
 - [Layout](#layout)
 - [Development](#development)
+- [Branching and review](#branching-and-review)
 - [The notebooks in `eda/` and `maps/`](#the-notebooks-in-eda-and-maps)
 - [Exploring data in Jupyter](#exploring-data-in-jupyter)
 - [Cheat sheet](#cheat-sheet)
@@ -112,7 +113,7 @@ pip install "git+https://github.com/Manteplante/ssb_statistikkbanken@main"
 ## Setup
 
 ```bash
-make sync     # uv sync --locked
+make sync     # uv sync --locked, plus core.hooksPath -> .githooks
 ```
 
 `.python-version` pins 3.14; uv fetches it if you don't have it. On WSL2 keep
@@ -132,7 +133,8 @@ the test suite are dramatically slower across the 9p mount.
 
 | Command | What |
 |---|---|
-| `make sync` | create/update `.venv` from `uv.lock` |
+| `make sync` | create/update `.venv` from `uv.lock`, and install the git hooks |
+| `make hooks` | point git at `.githooks/` (idempotent; `make sync` does it for you) |
 | `make format` | ruff auto-fix, then format |
 | `make lint` | ruff check + format check, writing nothing |
 | `make typecheck` | mypy over `src/` |
@@ -145,8 +147,89 @@ the test suite are dramatically slower across the 9p mount.
 | `make fixtures` | re-record the test fixtures |
 
 CI runs ruff, mypy and the offline suite on every push and pull request, on
-Python 3.12 and 3.14. It never calls SSB — run `make test-net` yourself when you
-want to know whether the live API has drifted.
+Python 3.14 — the version `.python-version` pins and everyone here develops on.
+It never calls SSB — run `make test-net` yourself when you want to know whether
+the live API has drifted.
+
+`requires-python` still allows 3.12, and ruff's `target-version` and mypy's
+`python_version` both stay at 3.12 so nothing 3.13+-only can sneak into the
+source. The syntax floor is enforced statically; it just isn't exercised at
+runtime any more.
+
+## Branching and review
+
+```
+feature branch ──PR──▶ dev ──PR──▶ main
+                        ▲
+                        └── admins may push straight here
+```
+
+`main` is the branch other repos install from, so it only ever moves through a
+reviewed PR from `dev`. `dev` is the integration branch: it takes PRs from
+feature branches, and repo admins can also push to it directly for small
+changes that don't need the ceremony.
+
+```bash
+git switch dev && git pull
+git switch -c feature/short-name
+# ... work, commit ...
+git push -u origin feature/short-name        # CI runs on this push
+# open the PR against dev
+```
+
+Three things hold the flow together, at three different distances from you:
+
+| Where | What it catches |
+|---|---|
+| `.githooks/pre-commit` | lint failures, before the commit exists |
+| the `branch flow` CI job | a PR into `main` that didn't come from `dev` |
+| GitHub rulesets | direct pushes, force-pushes, unreviewed merges |
+
+### The pre-commit hook
+
+`make sync` sets `core.hooksPath` to `.githooks/`, so the hook arrives with a
+fresh clone's first setup command — no separate install step, and no
+`pre-commit` package to add. It runs `make lint` (~1s) and refuses the commit if
+ruff complains:
+
+```bash
+make format        # fix what it found
+git add -u
+git commit         # again
+git commit --no-verify   # or skip the check for one commit
+```
+
+It deliberately doesn't run mypy or the tests — a hook people find slow is a
+hook people disable. CI is where those live.
+
+### Rulesets
+
+Rulesets are server-side, so they're the only part a collaborator can't skip.
+Set them up once:
+
+```bash
+DRY_RUN=1 ./scripts/protect_branches.sh                    # inspect the payloads
+GITHUB_TOKEN=github_pat_... ./scripts/protect_branches.sh  # apply them
+```
+
+The token needs **Administration: read and write** on this repo. The script is
+idempotent — re-run it after renaming a CI job, since the required checks are
+matched by job name.
+
+Two things worth knowing before you turn it on:
+
+- **GitHub won't let you approve your own PR.** With
+  `required_approving_review_count: 1` and no collaborators yet, `dev → main` is
+  only mergeable via the admin bypass the script grants you. Run it with
+  `APPROVALS=0` if you'd rather not lean on the bypass, and raise it when someone
+  else joins.
+- **To let a specific collaborator bypass too**, give them the *Maintain* role
+  under Settings → Collaborators and add `{"actor_id": 4, ...}` to
+  `bypass_actors` in the script.
+
+If the API answers 403 with an upgrade notice, rulesets aren't available for
+private repos on this account's plan. The hook and the `branch flow` job still
+work; you just lose the enforcement half.
 
 ## ⚠️ The notebooks in `eda/` and `maps/`
 

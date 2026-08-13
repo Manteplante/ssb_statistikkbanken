@@ -1,12 +1,16 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help sync format lint typecheck test test-net check coverage kernel notebook fixtures clean
+.PHONY: help sync hooks format lint typecheck test test-net check coverage kernel notebook fixtures clean
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/\t/' | expand -t20
 
-sync:  ## Create/update .venv from uv.lock
+sync: hooks  ## Create/update .venv from uv.lock (and install the git hooks)
 	uv sync --locked
+
+hooks:  ## Point git at .githooks/ so the pre-commit lint runs (idempotent)
+	@git config core.hooksPath .githooks
+	@echo "core.hooksPath -> .githooks  (skip a commit's lint with --no-verify)"
 
 format:  ## Auto-fix lint violations, then format
 	uv run ruff check --fix . && uv run ruff format .
