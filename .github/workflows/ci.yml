@@ -1,10 +1,21 @@
 name: CI
 
+# Two triggers on purpose:
+#   push  -- every branch, so a feature branch is checked from its first push,
+#            before anyone opens a PR.
+#   pull_request -- into main or dev only. This one runs against the *merge
+#            result*, which is what branch protection actually gates on.
+# A PR from a branch in this repo therefore runs twice. That's the cost of
+# knowing a feature branch is green before you raise the PR.
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
+    branches: [main, dev]
 
+# push and pull_request get different refs (refs/heads/x vs refs/pull/N/merge),
+# so these two never cancel each other -- only superseded pushes to the same
+# branch are cancelled.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -12,6 +23,25 @@ concurrency:
 # Offline only. The live SSB/KLASS tests are marked `network` and deselected
 # here and in addopts -- run them locally with `make test-net`.
 jobs:
+  # Enforces feature branch -> dev -> main. Rulesets can require a PR, but they
+  # can't say where the PR came from, so this job says it instead.
+  branch-flow:
+    name: branch flow
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check where this PR came from
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          if [ "$BASE" = "main" ] && [ "$HEAD" != "dev" ]; then
+            echo "::error::PRs into main must come from dev, but this one is from '$HEAD'." \
+                 "Retarget it at dev, then open dev -> main once it's merged."
+            exit 1
+          fi
+          echo "$HEAD -> $BASE: ok"
+
   lint:
     name: lint + typecheck
     runs-on: ubuntu-latest
@@ -46,10 +76,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      # The two ends of the supported range: the floor from requires-python,
-      # and the version .python-version pins for local development.
+      # A matrix of one: 3.14 is what .python-version pins and what everyone
+      # here develops on. Kept as a matrix so the version appears in the job
+      # name (and so the required status check names it), and so adding a leg
+      # back later is a one-line change.
       matrix:
-        python-version: ["3.12", "3.14"]
+        python-version: ["3.14"]
     steps:
       - uses: actions/checkout@v5
 

@@ -241,8 +241,13 @@ come back instantly rather than as an HTTP error.
 |---|---|
 | `make notebook` | scaffold a notebook in `eda/` (prompts for name + subfolder) |
 | `make kernel` | register the venv as a Jupyter kernel |
-| `make sync` | create/update `.venv` from `uv.lock` |
+| `make sync` | create/update `.venv` from `uv.lock` + install the git hooks |
+| `make hooks` | point git at `.githooks/` so pre-commit lints (idempotent) |
 | `make test` / `make test-net` | offline suite / live SSB smoke tests |
 | `make lint` / `make format` / `make typecheck` | ruff and mypy |
 | `make check` | everything CI runs |
 | `make fixtures` | re-record test fixtures |
+
+Branching is **feature branch → `dev` → `main`**; the pre-commit hook runs
+`make lint`, and `git commit --no-verify` skips it. See
+[Branching and review](README.md#branching-and-review).

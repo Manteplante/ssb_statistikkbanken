@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Run the same lint CI runs, so a red build is caught here rather than ten
+# minutes later on GitHub.
+#
+# Installed by `make hooks` (which `make sync` calls) via core.hooksPath --
+# hooks live in .git/, which isn't tracked, so a committed hook only takes
+# effect once git is pointed at this directory.
+#
+# Bypass a single commit with `git commit --no-verify`.
+#
+# Caveat worth knowing: this lints the *working tree*, not the staged snapshot.
+# If you `git add` a fix but leave other files dirty, ruff sees the dirty ones
+# too. Keeping it that way is deliberate -- stashing to lint the index exactly
+# is a good way to lose work in a hook.
+set -euo pipefail
+
+# Ruff only looks at Python, notebooks, and Python fenced in Markdown. Nothing
+# of that shape staged means nothing for it to say.
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(py|ipynb|md)$'; then
+    exit 0
+fi
+
+cd "$(git rev-parse --show-toplevel)"
+
+if ! command -v uv >/dev/null 2>&1; then
+    echo "pre-commit: uv is not on PATH -- skipping lint. Run 'make lint' yourself." >&2
+    exit 0
+fi
+
+echo "pre-commit: make lint"
+if ! make lint; then
+    cat >&2 <<'MSG'
+
+pre-commit: lint failed, so nothing was committed.
+
+    make format     # ruff auto-fix, then format
+    git add -u      # stage what it rewrote
+
+Then commit again. To skip this check for one commit: git commit --no-verify
+MSG
+    exit 1
+fi
