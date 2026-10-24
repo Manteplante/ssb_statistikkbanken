@@ -34,6 +34,7 @@ notebook = [
 
 [tool.uv]
 default-groups = ["dev", "notebook"]
+constraint-dependencies = ["certifi>=2026.10.19"]
 
 [build-system]
 # Installed editable into .venv on `uv sync`, so `import ssb_statistikkbanken`
